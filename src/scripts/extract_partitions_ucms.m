@@ -1,4 +1,4 @@
-function extract_partitions_ucms(method, gt_set, parameter)
+function extract_partitions_ucms(method_dir, gt_set, parameter)
 % extract_partitions_ucms(method, gt_set, parameter)
 % ------------------------------------------------------------------------ 
 %  Copyright (C)
@@ -9,7 +9,13 @@ function extract_partitions_ucms(method, gt_set, parameter)
 % ------------------------------------------------------------------------ 
 im_ids = load(fullfile(root_dir,'bsds500', ['ids_' gt_set '.txt']));
 
-method_dir = fullfile(datasets_root_dir, 'BSDS500', method);
+% Get the name of the folder
+if (method_dir(end)==filesep)
+    method_dir = method_dir(1:end-1);
+end
+[~,method] = fileparts(method_dir);
+
+% Output folder
 parts_dir = fullfile(root_dir,'datasets',method, parameter);
 if ~exist(parts_dir,'dir')
     mkdir(parts_dir)
