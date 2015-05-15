@@ -15,10 +15,10 @@ end
 n_th = 30;
 params = cell(n_th,1);
 for ii=1:n_th
-    params{ii} = ii/31;
+    params{ii} = num2str(ii/31);
 end
 
 % Run for all thresholds
 for jj=1:length(params)  
-    extract_partitions_ucms(method,gt_set, str2double(params{jj}))
+    extract_partitions_ucms(method,gt_set, params{jj})
 end
