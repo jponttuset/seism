@@ -1,5 +1,5 @@
-function extract_all_partitions_ucms(method,gt_set)
-% extract_all_partitions_ucms(method,gt_set)
+function extract_all_partitions_ucms(method_dir,gt_set)
+% extract_all_partitions_ucms(method_dir,gt_set)
 % ------------------------------------------------------------------------ 
 %  Copyright (C)
 %  Universitat Politecnica de Catalunya BarcelonaTech (UPC) - Spain
@@ -20,5 +20,5 @@ end
 
 % Run for all thresholds
 for jj=1:length(params)  
-    extract_partitions_ucms(method,gt_set, params{jj})
+    extract_partitions_ucms(method_dir,gt_set, params{jj})
 end
