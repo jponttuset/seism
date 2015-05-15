@@ -27,7 +27,7 @@ for ii=1:numel(im_ids)
         
     % Get the partition to assess
     load(fullfile(method_dir, [num2str(im_ids(ii)) '.mat']));
-    tmp = (bwlabel(ucm2'<=parameter,4))';
+    tmp = (bwlabel(ucm2'<=str2double(parameter),4))';
     partition = uint32(tmp(2:2:end,2:2:end));
    
     % Write to file
