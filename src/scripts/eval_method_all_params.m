@@ -22,7 +22,7 @@ parfor nn=1:length(experiments)
     parameter   = experiments(nn).parameter;
     measure     = experiments(nn).measure;
     disp(['Starting: ' method_name ' (' parameter ') for measure ' measure ' on ' gt_set])
-    eval_method(method_name, parameter, measure, exp_par.gt_set);
+    eval_method(method_name, parameter, measure, gt_set);
     disp(['Done:     ' method_name ' (' parameter ') for measure ' measure ' on ' gt_set])
 end
 
