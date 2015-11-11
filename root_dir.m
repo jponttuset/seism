@@ -16,12 +16,10 @@
 % ------------------------------------------------------------------------
 % 
 % This function returns the root directory where the package is installed.
-% Before running the script 'install.m', this directory should be updated
 %
 % ------------------------------------------------------------------------ 
 
 function root_dir = root_dir()
-
-root_dir = '/home/$usr/seism';
-
+    % Change suggested by Ahmad Humayun <ahmadh@gatech.edu>, thank you!
+    root_dir = fileparts(which(mfilename));
 end

@@ -38,8 +38,7 @@ gt_set = 'test';
 
 % Precision-recall measures
 measures = {'fb' ,... % Precision-recall for boundaries
-            'fop',... % Precision-recall for objects and parts  
-            };
+            'fop'};
         
 %% Evaluate your method (just once for all parameters)
 % method_name = 'mymethod';
@@ -65,13 +64,15 @@ colors = {'k','g','b','r','m','c'};
 %% Plot PR curves
 for kk=1:length(measures)
     iso_f_axis(measures{kk})
-    fig_handlers = zeros(1,length(methods)+1);
+    fig_handlers = [];
+    legends = {};
     
     % Plot human
-    human_same = gather_human(measures{kk}, 'same', gt_set, 'human_perf');
-    human_diff = gather_human(measures{kk}, 'diff', gt_set, 'human_perf');
-    fig_handlers(1) = plot(human_same.mean_rec,human_same.mean_prec, 'rd');
-    plot(human_diff.mean_rec,human_diff.mean_prec, 'rd');
+%     human_same = gather_human(measures{kk}, 'same', gt_set, 'human_perf');
+%     human_diff = gather_human(measures{kk}, 'diff', gt_set, 'human_perf');
+%     fig_handlers(end+1) = plot(human_same.mean_rec,human_same.mean_prec, 'rd');
+%     plot(human_diff.mean_rec,human_diff.mean_prec, 'rd');
+%     legends{end+1} = 'Human'; %#ok<SAGROW>
     
     % Plot methods
     for ii=1:length(methods)
@@ -90,11 +91,12 @@ for kk=1:length(measures)
         curr_ois = general_ois(curr_meas);
         
         % Plot method
-        fig_handlers(ii+1) = plot(curr_meas.mean_rec,curr_meas.mean_prec,[colors{ii} '-']);
+        fig_handlers(end+1) = plot(curr_meas.mean_rec,curr_meas.mean_prec,[colors{ii} '-']); %#ok<SAGROW>
         plot(curr_ods.mean_rec,curr_ods.mean_prec,[colors{ii} '*'])
+        legends{end+1} = [methods{ii} ' [' num2str(curr_ods.mean_value) ']']; %#ok<SAGROW>
     end
     
-    legend(fig_handlers,{'Human', methods{1:end}}, 'Location','NorthEastOutside')
+    legend(fig_handlers,legends, 'Location','NorthEastOutside')
 end
 
 

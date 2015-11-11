@@ -12,10 +12,10 @@ if nargin==1
 end
 
 % Get thresholds
-n_th = 30;
+n_th = 100;
 params = cell(n_th,1);
 for ii=1:n_th
-    params{ii} = num2str(ii/31);
+    params{ii} = num2str(ii/(n_th+1));
 end
 
 % Run for all thresholds
