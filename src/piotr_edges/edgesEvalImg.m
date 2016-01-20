@@ -45,15 +45,18 @@ function [thrs,cntR,sumR,cntP,sumP,V] = edgesEvalImg( E, G, varargin )
 % Licensed under the MSR-LA Full Rights License [see license.txt]
 
 % get additional parameters
-dfs={ 'out','', 'thrs',99, 'maxDist',.0075, 'thin',1 };
+% dfs={ 'out','', 'thrs',99, 'maxDist',.0075, 'thin',1 };
+dfs={ 'out','', 'thrs',1, 'maxDist',.0075, 'thin',1 }; % One threshold 0.5 because binary images
 [out,thrs,maxDist,thin] = getPrmDflt(varargin,dfs,1);
 if(any(mod(thrs,1)>0)), K=length(thrs); thrs=thrs(:); else
   K=thrs; thrs=linspace(1/(K+1),1-1/(K+1),K)'; end
 
 % load edges (E) and ground truth (G)
 if(all(ischar(E))), E=double(imread(E))/255; end
-G=load(G); G=G.groundTruth; n=length(G);
-for g=1:n, G{g}=double(G{g}.Boundaries); end
+% G=load(G); G=G.groundTruth; n=length(G); % Modified by Jordi Pont-Tuset to adapt to SEISM
+n=length(G);
+% for g=1:n, G{g}=double(G{g}.Boundaries); end   % Modified by Jordi Pont-Tuset to adapt to SEISM
+for g=1:n, G{g}=double(seg2bmap(G{g})); end
 
 % evaluate edge result at each threshold
 Z=zeros(K,1); cntR=Z; sumR=Z; cntP=Z; sumP=Z;

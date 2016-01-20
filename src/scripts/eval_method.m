@@ -81,16 +81,7 @@ for ii=1:numel(im_ids)
         if ~strcmp(measure,'fb')
             error('Contours can only be evaluated using the ''fb'' measure')
         end
-        
-        % Compute  fb
-        [prec, rec] = fb(partition_or_contour,gt_seg);
-        
-        if (prec+rec)==0
-            fmeas = 0;
-        else
-            fmeas = 2*prec*rec/(prec+rec);
-        end
-        value = [fmeas, prec, rec];
+        value = eval_cont(partition_or_contour,gt_seg);
     end
     
     % Write to file
