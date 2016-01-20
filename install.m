@@ -22,7 +22,7 @@
 % ------------------------------------------------------------------------ 
 
 % Set the dependencies path
-segbench_path = '/path/to/segbench';
+segbench_path = '/Users/jpont/Workspace/libs/segbench/Benchmark';
 
 % Install BSDS300 segbench code
 if exist(segbench_path,'dir')==0

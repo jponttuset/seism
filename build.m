@@ -28,8 +28,8 @@ function build()
 include{1} = fullfile(root_dir, 'src');  % Own files
 include{2} = '/opt/local/include';  % Boost libraries (change it if necessary)
 
-build_file{1} = fullfile(root_dir, 'src', 'io', 'mex_prl_read.cpp');
-build_file{2} = fullfile(root_dir, 'src', 'io', 'mex_prl_write.cpp');
+build_file{1} = fullfile(root_dir, 'src', 'io', 'prl', 'mex_prl_read.cpp');
+build_file{2} = fullfile(root_dir, 'src', 'io', 'prl', 'mex_prl_write.cpp');
 build_file{3} = fullfile(root_dir, 'src', 'measures', 'mex_eval_segm.cpp');
 
 

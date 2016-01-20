@@ -29,7 +29,7 @@
 %     examples.
 %  5) Evaluate your method with the piece of code below (just once, comment it when done)
 %  6) Add your method to the list of methods to display.
-%  7) Run the rest of the code and enjoy you PR curves!
+%  7) Run the rest of the code and enjoy your PR curves!
 % ------------------------------------------------------------------------ 
 
 %% Experiments parameters
@@ -41,25 +41,22 @@ measures = {'fb' ,... % Precision-recall for boundaries
             'fop'};
         
 %% Evaluate your method (just once for all parameters)
-% method_name = 'mymethod';
-% 
-% % Get all parameters for that method from file
-% fid = fopen(fullfile(root_dir,'datasets',method_name,'params.txt'));
-% params = textscan(fid, '%s');
-% params = params{1};
-% fclose(fid);
-% 
-% % Evaluate
-% for ii=1:length(measures)
-%     for jj=1:length(params)
-%         eval_method(method_name, params{jj}, measures{ii}, gt_set);
-%     end
-% end
+
+% Evaluate using the correct reading function
+for ii=1:length(measures)
+%     eval_method_all_params('MCG-HED', measures{ii}, @read_one_ucm, gt_set)
+%     eval_method_all_params('EGB'    , measures{ii}, @read_one_prl, gt_set)
+%     eval_method_all_params('LEP'    , measures{ii}, @read_one_lep, gt_set)
+end
+
+% Evaluate contours using the correct reading function
+eval_method_all_params('HED', 'fb', @read_one_cont_png, gt_set, 1)
+
 
 %% PR curves methods to show
 % List of segmentation methods to show (add your methods)
-methods   = {'UCM','EGB','NCut','MShift','NWMC','IIDKL'};
-colors = {'k','g','b','r','m','c'};
+methods   = {'MCG-HED','LEP','MCG','gPb-UCM','EGB','NCut','MShift'};
+colors = {'k','g','b','r','m','c','y'};
 
 %% Plot PR curves
 for kk=1:length(measures)
@@ -68,11 +65,11 @@ for kk=1:length(measures)
     legends = {};
     
     % Plot human
-%     human_same = gather_human(measures{kk}, 'same', gt_set, 'human_perf');
-%     human_diff = gather_human(measures{kk}, 'diff', gt_set, 'human_perf');
-%     fig_handlers(end+1) = plot(human_same.mean_rec,human_same.mean_prec, 'rd');
-%     plot(human_diff.mean_rec,human_diff.mean_prec, 'rd');
-%     legends{end+1} = 'Human'; %#ok<SAGROW>
+    human_same = gather_human(measures{kk}, 'same', gt_set, 'human_perf');
+    human_diff = gather_human(measures{kk}, 'diff', gt_set, 'human_perf');
+    fig_handlers(end+1) = plot(human_same.mean_rec,human_same.mean_prec, 'rd'); %#ok<SAGROW>
+    plot(human_diff.mean_rec,human_diff.mean_prec, 'rd');
+    legends{end+1} = 'Human'; %#ok<SAGROW>
     
     % Plot methods
     for ii=1:length(methods)
@@ -93,7 +90,7 @@ for kk=1:length(measures)
         % Plot method
         fig_handlers(end+1) = plot(curr_meas.mean_rec,curr_meas.mean_prec,[colors{ii} '-']); %#ok<SAGROW>
         plot(curr_ods.mean_rec,curr_ods.mean_prec,[colors{ii} '*'])
-        legends{end+1} = [methods{ii} ' [' num2str(curr_ods.mean_value) ']']; %#ok<SAGROW>
+        legends{end+1} = [methods{ii} ' [' sprintf('%0.3f',curr_ods.mean_value) ']']; %#ok<SAGROW>
     end
     
     legend(fig_handlers,legends, 'Location','NorthEastOutside')
