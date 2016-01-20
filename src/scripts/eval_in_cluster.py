@@ -9,6 +9,10 @@
 #$ -e /scratch_net/neo/jpont/logs/
 #$ -j y
 
+# ------------Hard-Coded Parameters ------------
+database = 'bsds500'
+gt_set   = 'test'
+
 # ----------------- Imports --------------------
 import os
 import numpy as np
@@ -29,22 +33,31 @@ def file_subpart(fname,id_start,id_end):
 
 # ------------- Get the parameters -------------
 if len(sys.argv)<2:
-  exit(1)
+	print "ERROR: Not enough input parameters"
+  	exit(1)
 else:
-  method = sys.argv[1]
+  	method = sys.argv[1] # Name of the folder containing the partitions or contours
 
 if len(sys.argv)>2:
-  n_jobs = int(sys.argv[2])
+  	n_jobs = int(sys.argv[2])
 else:
-  n_jobs = 1
+  	n_jobs = 1
 
-code_folder = "/srv/glusterfs/jpont/dev/seism_in_progress"
+# ---- Get the working folder (code folder) ----
+code_folder = os.getcwd()
+print code_folder
+# Check that we are in the right folder
+if not os.path.isdir(code_folder + "/datasets/"):
+	print "ERROR: datasets folder not found, are you in the code folder of SEISM?"
+	exit(1)
+if not os.path.isdir(code_folder + "/src/") or not os.path.exists(code_folder + "/install.m"):
+	print "ERROR: Source code not found, are you in the code folder of SEISM?"
+	exit(1)
+
 
 # ---------------- Main code -------------------
-database = 'bsds500'
-gt_set   = 'test'
-gt_ids_file = code_folder + "/" + database + "/ids_" + gt_set + ".txt"
-ids_file    = code_folder + "/datasets/"+method+"/params.txt"
+ids_file = code_folder + "/" + database + "/ids_" + gt_set + ".txt"
+par_file    = code_folder + "/datasets/"+method+"/params.txt"
 
 task_id = int(os.getenv("SGE_TASK_ID", "0"))
 if task_id==0:
@@ -57,9 +70,10 @@ print "Process " + str(task_id) + " out of " + str(n_jobs)
 sys.stdout.flush()
 
 # Get the total number of images
-n_pars = file_len(ids_file)
-n_ims  = file_len(gt_ids_file)
-
+n_pars = file_len(par_file)
+n_ims  = file_len(ids_file)
+print n_ims
+exit()
 # Get the positions that this process will handle
 jobs_per_child = int(math.floor(float(n_pars)/n_jobs))
 remainder = n_pars%n_jobs
@@ -75,17 +89,11 @@ else:
     else:
         id_end = id_start+jobs_per_child-1
 
-#print 'remainder='+str(remainder)
-#print 'n_pars=' +str(n_pars)
 print 'id_start='+str(id_start)
 print 'id_end='+str(id_end)
-#print 'n_ims=' +str(n_ims)
-#print 'jobs_per_child=' + str(jobs_per_child)
 
 # Get all parameters
-all_params = [line.rstrip('\n') for line in open(ids_file)]
-
-#print 'len(all_params)=' +str(len(all_params))
+all_params = [line.rstrip('\n') for line in open(par_file)]
 
 # Run the actual code
 os.chdir(code_folder)
@@ -99,7 +107,5 @@ for ii in range(id_start-1,id_end):
 
     if run==1:
         command_to_run = "/usr/sepp/bin/matlab -nodesktop -nodisplay -nosplash -r \"install;eval_method('"+method+"','"+all_params[ii]+"','fb',@read_one_cont_png,'"+gt_set+"',"+str(n_ims)+",1);exit\""
-        #print command_to_run;
-        #print res_file;
         os.system(command_to_run)
 
