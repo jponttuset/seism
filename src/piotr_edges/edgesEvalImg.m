@@ -56,7 +56,7 @@ if(all(ischar(E))), E=double(imread(E))/255; end
 % G=load(G); G=G.groundTruth; n=length(G); % Modified by Jordi Pont-Tuset to adapt to SEISM
 n=length(G);
 % for g=1:n, G{g}=double(G{g}.Boundaries); end   % Modified by Jordi Pont-Tuset to adapt to SEISM
-for g=1:n, G{g}=double(seg2bmap(G{g})); end
+for g=1:n, G{g}=double(bwmorph(seg2bmap(G{g}),'thin','Inf')); end
 
 % evaluate edge result at each threshold
 Z=zeros(K,1); cntR=Z; sumR=Z; cntP=Z; sumP=Z;

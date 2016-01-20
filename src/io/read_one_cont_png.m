@@ -5,8 +5,5 @@ function contour = read_one_cont_png(method_dir, parameter, im_id)
         contour = [];
     else
         contour = im2double(imread(res_file))>str2double(parameter);
-        
-        % Thinning
-        contour = bwmorph(contour,'thin',Inf);
     end
 end
