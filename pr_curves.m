@@ -50,13 +50,14 @@ for ii=1:length(measures)
 end
 
 % Evaluate contours using the correct reading function
-eval_method_all_params('HED', 'fb', @read_one_cont_png, gt_set, 1)
+% eval_method_all_params('HED', 'fb', @read_one_cont_png, gt_set, 1)
 
 
 %% PR curves methods to show
 % List of segmentation methods to show (add your methods)
-methods   = {'MCG-HED','LEP','MCG','gPb-UCM','EGB','NCut','MShift'};
-colors = {'k','g','b','r','m','c','y'};
+methods   = {'MCG-HED','HED','LEP','MCG','gPb-UCM','EGB','NCut','MShift'};
+which_contours = {'HED'};
+colors = {'k','g','b','r','m','c','y','r','k'};
 
 %% Plot PR curves
 for kk=1:length(measures)
@@ -73,24 +74,28 @@ for kk=1:length(measures)
     
     % Plot methods
     for ii=1:length(methods)
-        % Get all parameters for that method from file
-        fid = fopen(fullfile(root_dir,'datasets',methods{ii},'params.txt'));
-        if fid<0
-            error([fullfile(root_dir,'datasets',methods{ii},'params.txt') ' not found! Have you downloaded the datasets? Have you followed the structure described in the header of pr_curves to add your new technique?'])
-        end
-        params = textscan(fid, '%s');
-        params = params{1};
-        fclose(fid);
-    
-        % Gather pre-computed results
-        curr_meas = gather_measure(methods{ii},params,measures{kk},gt_set);
-        curr_ods = general_ods(curr_meas);
-        curr_ois = general_ois(curr_meas);
         
-        % Plot method
-        fig_handlers(end+1) = plot(curr_meas.mean_rec,curr_meas.mean_prec,[colors{ii} '-']); %#ok<SAGROW>
-        plot(curr_ods.mean_rec,curr_ods.mean_prec,[colors{ii} '*'])
-        legends{end+1} = [methods{ii} ' [' sprintf('%0.3f',curr_ods.mean_value) ']']; %#ok<SAGROW>
+        % Plot the contours only in 'fb'
+        if strcmp(measures{kk},'fb') || all(~ismember(which_contours,methods{ii}))
+            % Get all parameters for that method from file
+            fid = fopen(fullfile(root_dir,'datasets',methods{ii},'params.txt'));
+            if fid<0
+                error([fullfile(root_dir,'datasets',methods{ii},'params.txt') ' not found! Have you downloaded the datasets? Have you followed the structure described in the header of pr_curves to add your new technique?'])
+            end
+            params = textscan(fid, '%s');
+            params = params{1};
+            fclose(fid);
+
+            % Gather pre-computed results
+            curr_meas = gather_measure(methods{ii},params,measures{kk},gt_set);
+            curr_ods = general_ods(curr_meas);
+            curr_ois = general_ois(curr_meas);
+
+            % Plot method
+            fig_handlers(end+1) = plot(curr_meas.mean_rec,curr_meas.mean_prec,[colors{ii} '-']); %#ok<SAGROW>
+            plot(curr_ods.mean_rec,curr_ods.mean_prec,[colors{ii} '*'])
+            legends{end+1} = [methods{ii} ' [' sprintf('%0.3f',curr_ods.mean_value) ']']; %#ok<SAGROW>
+        end
     end
     
     legend(fig_handlers,legends, 'Location','NorthEastOutside')
