@@ -44,8 +44,9 @@ else:
   	n_jobs = 1
 
 # ---- Get the working folder (code folder) ----
-code_folder = os.getcwd()
-print code_folder
+#code_folder = os.getcwd()
+code_folder = '/srv/glusterfs/jpont/dev/seism_in_progress/'
+
 # Check that we are in the right folder
 if not os.path.isdir(code_folder + "/datasets/"):
 	print "ERROR: datasets folder not found, are you in the code folder of SEISM?"
@@ -72,8 +73,7 @@ sys.stdout.flush()
 # Get the total number of images
 n_pars = file_len(par_file)
 n_ims  = file_len(ids_file)
-print n_ims
-exit()
+
 # Get the positions that this process will handle
 jobs_per_child = int(math.floor(float(n_pars)/n_jobs))
 remainder = n_pars%n_jobs
