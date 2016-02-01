@@ -55,7 +55,7 @@ end
 
 %% PR curves methods to show
 % List of segmentation methods to show (add your methods)
-methods   = {'MCG-HED','HED','LEP','MCG','gPb-UCM','EGB','NCut','MShift'};
+methods   = {'MCG-HED','HED','LEP','MCG','UCM','EGB','NCut','MShift'};
 which_contours = {'HED'};
 colors = {'k','g','b','r','m','c','y','r','k'};
 
