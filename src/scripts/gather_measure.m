@@ -9,10 +9,10 @@ function stats = gather_measure(method, params, measure, gt_set)
 % ------------------------------------------------------------------------ 
 
 % Directory where results are stored
-results_dir = fullfile(root_dir, 'results', method);
+results_dir = fullfile(seism_root, 'results', method);
   
 % Set of images considered according to gt_set ('test', 'val', 'train')
-image_idxs = load(fullfile(root_dir, 'bsds500', ['ids_' gt_set '.txt']));
+image_idxs = db_ids('BSDS500',gt_set);
 
 % Get dimensions
 num_images = length(image_idxs);

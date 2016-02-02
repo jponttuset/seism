@@ -21,24 +21,23 @@
 % The path below corresponds to the folder where the package is installed.
 % ------------------------------------------------------------------------ 
 
-% Check that 'root_dir' has been set
-if ~exist(root_dir,'dir')
-    error('Error installing the package, try updating the value of root_dir in the file "root_dir.m"')
+% Check that 'seism_root' has been set
+if ~exist(seism_root,'dir')
+    error('Error installing the package, try updating the value of seism_root in the file "seism_root.m"')
 end
 
-% Check that 'root_dir' has the needed folder
-if ~exist(fullfile(root_dir,'lib'),'dir')
+% Check that 'seism_root' has the needed folder
+if ~exist(fullfile(seism_root,'lib'),'dir')
     error('Error installing the package, the folder "lib" not found')
 end
-if ~exist(fullfile(root_dir,'src'),'dir')
+if ~exist(fullfile(seism_root,'src'),'dir')
     error('Error installing the package, the folder "src" not found')
 end
 
 % Install own lib
-addpath(root_dir);
-addpath(fullfile(root_dir,'lib'));
-addpath(fullfile(root_dir,'cvpr2013'));
-addpath(genpath(fullfile(root_dir,'src')));
+addpath(seism_root);
+addpath(fullfile(seism_root,'lib'));
+addpath(genpath(fullfile(seism_root,'src')));
 
 % Check that the needed functions are compiled
 if exist('correspondPixels')~=3 %#ok<EXIST>

@@ -25,17 +25,17 @@
 function build()
 
 %% Include paths and files to compile
-include{1} = fullfile(root_dir, 'src');  % Own files
+include{1} = fullfile(seism_root, 'src');  % Own files
 include{2} = '/opt/local/include';  % Boost libraries (change it if necessary)
 
-build_file{1} = fullfile(root_dir, 'src', 'io', 'prl', 'mex_prl_read.cpp');
-build_file{2} = fullfile(root_dir, 'src', 'io', 'prl', 'mex_prl_write.cpp');
-build_file{3} = fullfile(root_dir, 'src', 'measures', 'mex_eval_segm.cpp');
+build_file{1} = fullfile(seism_root, 'src', 'io', 'prl', 'mex_prl_read.cpp');
+build_file{2} = fullfile(seism_root, 'src', 'io', 'prl', 'mex_prl_write.cpp');
+build_file{3} = fullfile(seism_root, 'src', 'measures', 'mex_eval_segm.cpp');
 
 
 %% %% Build everything
-if ~exist(fullfile(root_dir, 'lib'),'dir')
-    mkdir(fullfile(root_dir, 'lib'))
+if ~exist(fullfile(seism_root, 'lib'),'dir')
+    mkdir(fullfile(seism_root, 'lib'))
 end
 
 include_str = '';
@@ -44,5 +44,5 @@ for ii=1:length(include)
 end
             
 for ii=1:length(build_file)
-    eval(['mex ' build_file{ii} ' -outdir ' fullfile(root_dir, 'lib') include_str])
+    eval(['mex ' build_file{ii} ' -outdir ' fullfile(seism_root, 'lib') include_str])
 end

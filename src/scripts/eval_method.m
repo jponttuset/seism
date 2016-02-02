@@ -19,12 +19,11 @@ if ~exist('segm_or_contour','var')
 end
 
 % Load BSDS500 indices
-im_ids = load(fullfile(root_dir,'bsds500', ['ids_' gt_set '.txt']));
+im_ids = db_ids('BSDS500',gt_set);
 
 % I/O folders
-method_dir = fullfile(root_dir,'datasets',method);
-gtdir      = fullfile(root_dir,'bsds500','ground_truth');
-res_dir    = fullfile(root_dir,'results', method);
+method_dir = fullfile(seism_root,'datasets',method);
+res_dir    = fullfile(seism_root,'results', method);
 if ~exist(res_dir,'dir')
     mkdir(res_dir)
 end
@@ -59,7 +58,7 @@ for ii=1:numel(im_ids)
     curr_id = im_ids(ii);
 
     % Read ground truth (gt_seg)
-    load(fullfile(gtdir, [num2str(curr_id) '.mat']));
+    gt_seg = db_gt();
     
     % Read the partition
     partition_or_contour = read_part_fun(method_dir, parameter, num2str(curr_id));

@@ -22,10 +22,7 @@ if ~exist('segm_or_contour','var')
 end
 
 %% Get all parameters for that method from file
-fid = fopen(fullfile(root_dir,'datasets',method,'params.txt'));
-params = textscan(fid, '%s');
-params = params{1};
-fclose(fid);
+params = get_method_parameters(method);
 
 for ii=1:length(params)
     experiments(ii).method = method; %#ok<AGROW>

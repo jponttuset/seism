@@ -9,7 +9,7 @@ function stats = gather_human(measure, type, gt_set, generalization_type)
 % ------------------------------------------------------------------------ 
 
 % Get data
-results_dir = fullfile(root_dir, 'results', 'human');
+results_dir = fullfile(seism_root, 'results', 'human');
 curr_results = load(fullfile(results_dir, [generalization_type '_' gt_set '_' type '_' measure '.txt']));
 
 % Gather results

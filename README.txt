@@ -1,3 +1,5 @@
+[OUTDATED README - TODO]
+
 This file is the README file of the package "SEISM.zip", which
 contains the code of the segmentation evaluation measures presented in:
 
@@ -10,11 +12,11 @@ using this code.
 
 To install the package:
 
-1) Uncompress "SEISM.tgz‚Äù for instance to:
+1) Uncompress "SEISM.tgzÄù for instance to:
    /home/$usr/seism
    This should contain six folders "bsds500", "cvpr2013", "doc", "lib", "results", and "src".
 
-2) Modify the file root_dir.m to point to the path where the package was
+2) Modify the file seism_root.m to point to the path where the package was
    extracted (in the example /home/$usr$/seism)
 
 3) BUILD: For mac64 and linux64 architectures, the library comes pre-built.
