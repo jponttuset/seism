@@ -1,6 +1,7 @@
 function test_io(methods, database, gt_set)
     for ii=1:length(methods)
         check_one_io(methods(ii).name, methods(ii).io_func, database, gt_set);
+        disp([methods(ii).name ' done'])
     end
 end
 

@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-# qsub -t 1-50 soa_eval.py LEP 50
 # ----- Parameters passed to the cluster -------
 #$ -S /usr/bin/python
 #$ -l h_rt=0:59:00
@@ -9,9 +8,29 @@
 #$ -e /scratch_net/neo/jpont/logs/
 #$ -j y
 
+# ------------- Examples of usage --------------
+# qsub -N evalFb -t 1-100 eval_in_cluster.py HED     read_one_cont_png fb 1 100
+# qsub -N evalFb -t 1-100 eval_in_cluster.py LEP     read_one_lep      fb 1 100
+# qsub -N evalFb -t 1-100 eval_in_cluster.py MCG     read_one_ucm      fb 1 100
+# qsub -N evalFb -t 1-100 eval_in_cluster.py gPb-UCM read_one_ucm      fb 1 100
+# qsub -N evalFb -t 1-100 eval_in_cluster.py NWMC    read_one_ucm      fb 1 100
+# qsub -N evalFb -t 1-100 eval_in_cluster.py IIDKL   read_one_ucm      fb 1 100
+# qsub -N evalFb -t 1-100 eval_in_cluster.py EGB     read_one_prl      fb 1 100
+# qsub -N evalFb -t 1-100 eval_in_cluster.py MShift  read_one_prl      fb 1 100
+# qsub -N evalFb -t 1-100 eval_in_cluster.py NCut    read_one_prl      fb 1 100
+
+# qsub -N evalFop -t 1-20 eval_in_cluster.py LEP     read_one_lep      fop 0 20
+# qsub -N evalFop -t 1-20 eval_in_cluster.py MCG     read_one_ucm      fop 0 20
+# qsub -N evalFop -t 1-20 eval_in_cluster.py gPb-UCM read_one_ucm      fop 0 20
+# qsub -N evalFop -t 1-20 eval_in_cluster.py NWMC    read_one_ucm      fop 0 20
+# qsub -N evalFop -t 1-20 eval_in_cluster.py IIDKL   read_one_ucm      fop 0 20
+# qsub -N evalFop -t 1-20 eval_in_cluster.py EGB     read_one_prl      fop 0 20
+# qsub -N evalFop -t 1-20 eval_in_cluster.py MShift  read_one_prl      fop 0 20
+# qsub -N evalFop -t 1-20 eval_in_cluster.py NCut    read_one_prl      fop 0 20
+
 # ------------Hard-Coded Parameters ------------
-database = 'bsds500'
-gt_set   = 'test'
+database = 'BSDS500'
+gt_set   = 'val'
 
 # ----------------- Imports --------------------
 import os
@@ -32,14 +51,17 @@ def file_subpart(fname,id_start,id_end):
 
 
 # ------------- Get the parameters -------------
-if len(sys.argv)<2:
+if len(sys.argv)<5:
 	print "ERROR: Not enough input parameters"
   	exit(1)
 else:
   	method = sys.argv[1] # Name of the folder containing the partitions or contours
+  	io_func = sys.argv[2] # I/O function
+  	measure = sys.argv[3] # fb or fop
+  	contour  = sys.argv[4] # Contour or segmentation
 
-if len(sys.argv)>2:
-  	n_jobs = int(sys.argv[2])
+if len(sys.argv)>5:
+  	n_jobs = int(sys.argv[5])
 else:
   	n_jobs = 1
 
@@ -57,8 +79,8 @@ if not os.path.isdir(code_folder + "/src/") or not os.path.exists(code_folder + 
 
 
 # ---------------- Main code -------------------
-ids_file = code_folder + "/" + database + "/ids_" + gt_set + ".txt"
-par_file    = code_folder + "/datasets/"+method+"/params.txt"
+ids_file = code_folder + "/src/gt_wrappers/gt_sets/" + database + "/" + gt_set + ".txt"
+par_file    = code_folder + "/parameters/"+method+".txt"
 
 task_id = int(os.getenv("SGE_TASK_ID", "0"))
 if task_id==0:
@@ -98,7 +120,7 @@ all_params = [line.rstrip('\n') for line in open(par_file)]
 # Run the actual code
 os.chdir(code_folder)
 for ii in range(id_start-1,id_end):
-    res_file = code_folder + "/results/"+method+"/test_fb_"+all_params[ii]+".txt"
+    res_file = code_folder + "/results/"+database+"/"+method+"/"+gt_set+"_"+measure+"_"+all_params[ii]+".txt"
     run = 1;
     if os.path.isfile(res_file):
         print 'Found: ' + res_file
@@ -106,7 +128,6 @@ for ii in range(id_start-1,id_end):
             run = 0;
 
     if run==1:
-        command_to_run = "/usr/sepp/bin/matlab -nodesktop -nodisplay -nosplash -r \"install;eval_method('"+method+"','"+all_params[ii]+"','fb',@read_one_cont_png,'"+gt_set+"',"+str(n_ims)+",1);exit\""
-        #command_to_run = "/usr/sepp/bin/matlab -nodesktop -nodisplay -nosplash -r \"install;eval_method('"+method+"','"+all_params[ii]+"','fb',@read_one_ucm,'"+gt_set+"',"+str(n_ims)+",0);exit\""
+        command_to_run = "/usr/sepp/bin/matlab -nodesktop -nodisplay -nosplash -r \"install;eval_method('"+method+"','"+all_params[ii]+"','"+measure+"',@"+io_func+",'"+database+"','"+gt_set+"',"+str(n_ims)+","+contour+");exit\""
         os.system(command_to_run)
 

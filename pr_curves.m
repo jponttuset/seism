@@ -35,7 +35,7 @@
 %% Experiments parameters
 % BSDS500 set: train, test, val, trainval, or all
 database = 'BSDS500';
-gt_set   = 'test';
+gt_set   = 'val';
 
 % Precision-recall measures
 measures = {'fb' ,... % Precision-recall for boundaries
