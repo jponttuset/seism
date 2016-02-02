@@ -27,7 +27,7 @@ if ~iscell(ground_truth)
 end
 
 % Call Piotr's edges code
-[~,cntR,sumR,cntP,sumP] = edgesEvalImg(contours,ground_truth,'thin',0);
+[~,cntR,sumR,cntP,sumP] = edgesEvalImg(contours,ground_truth);
 
 % Compute precision-recall
 if sumR==0

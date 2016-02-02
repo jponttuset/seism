@@ -54,7 +54,7 @@ methods(end+1).name = 'HED'     ; methods(end).io_func = @read_one_cont_png;
 methods(end+1).name = 'LEP'     ; methods(end).io_func = @read_one_lep;
 % methods(end+1).name = 'ISCRA'   ; methods(end).io_func = @read_one_ucm;
 methods(end+1).name = 'MCG'     ; methods(end).io_func = @read_one_ucm;
-% methods(end+1).name = 'gPb-UCM' ; methods(end).io_func = @read_one_ucm;
+methods(end+1).name = 'gPb-UCM' ; methods(end).io_func = @read_one_ucm;
 % methods(end+1).name = 'NWMC'    ; methods(end).io_func = @read_one_ucm;
 % methods(end+1).name = 'IIDKL'   ; methods(end).io_func = @read_one_ucm;
 % methods(end+1).name = 'EGB'     ; methods(end).io_func = @read_one_prl;
