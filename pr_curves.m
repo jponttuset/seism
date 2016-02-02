@@ -39,25 +39,38 @@ gt_set = 'test';
 % Precision-recall measures
 measures = {'fb' ,... % Precision-recall for boundaries
             'fop'};
-        
+ 
+% Define all methods to be compared
+methods  = [];
+methods(end+1).name = 'HED'    ; methods(end).io_func = @read_one_cont_png;
+methods(end+1).name = 'LEP'    ; methods(end).io_func = @read_one_lep;
+% methods(end+1).name = 'iscra'  ; methods(end).io_func = @read_one_ucm;
+methods(end+1).name = 'MCG'    ; methods(end).io_func = @read_one_ucm;
+methods(end+1).name = 'gPb-UCM'; methods(end).io_func = @read_one_ucm;
+methods(end+1).name = 'NWMC'   ; methods(end).io_func = @read_one_ucm;
+methods(end+1).name = 'IIDKL'  ; methods(end).io_func = @read_one_ucm;
+methods(end+1).name = 'EGB'    ; methods(end).io_func = @read_one_prl;
+methods(end+1).name = 'MShift' ; methods(end).io_func = @read_one_prl;
+methods(end+1).name = 'NCut'   ; methods(end).io_func = @read_one_prl;
+
+% Which of these are only contours?
+which_contours = {'HED'};
+
+% Colors to display    
+colors = {'k','g','b','r','m','c','y','r','k','g','b'};
+
 %% Evaluate your method (just once for all parameters)
 
-% Evaluate using the correct reading function
+% Evaluate partitions using the correct reading function
 for ii=1:length(measures)
-%     eval_method_all_params('MCG-HED', measures{ii}, @read_one_ucm, gt_set)
-%     eval_method_all_params('EGB'    , measures{ii}, @read_one_prl, gt_set)
-%     eval_method_all_params('LEP'    , measures{ii}, @read_one_lep, gt_set)
+    for jj=1:length(methods)
+        eval_method_all_params(methods(jj).name, measures{ii}, methods(jj).io_func, gt_set)
+    end
 end
 
 % Evaluate contours using the correct reading function
 % eval_method_all_params('HED', 'fb', @read_one_cont_png, gt_set, 1)
 
-
-%% PR curves methods to show
-% List of segmentation methods to show (add your methods)
-methods   = {'MCG-HED','HED','LEP','MCG','UCM','EGB','NCut','MShift'};
-which_contours = {'HED'};
-colors = {'k','g','b','r','m','c','y','r','k'};
 
 %% Plot PR curves
 for kk=1:length(measures)
@@ -78,23 +91,17 @@ for kk=1:length(measures)
         % Plot the contours only in 'fb'
         if strcmp(measures{kk},'fb') || all(~ismember(which_contours,methods{ii}))
             % Get all parameters for that method from file
-            fid = fopen(fullfile(root_dir,'datasets',methods{ii},'params.txt'));
-            if fid<0
-                error([fullfile(root_dir,'datasets',methods{ii},'params.txt') ' not found! Have you downloaded the datasets? Have you followed the structure described in the header of pr_curves to add your new technique?'])
-            end
-            params = textscan(fid, '%s');
-            params = params{1};
-            fclose(fid);
+            params = get_method_parameters(methods(ii).name);
 
             % Gather pre-computed results
-            curr_meas = gather_measure(methods{ii},params,measures{kk},gt_set);
+            curr_meas = gather_measure(methods(ii).name,params,measures{kk},gt_set);
             curr_ods = general_ods(curr_meas);
             curr_ois = general_ois(curr_meas);
 
             % Plot method
             fig_handlers(end+1) = plot(curr_meas.mean_rec,curr_meas.mean_prec,[colors{ii} '-']); %#ok<SAGROW>
             plot(curr_ods.mean_rec,curr_ods.mean_prec,[colors{ii} '*'])
-            legends{end+1} = [methods{ii} ' [' sprintf('%0.3f',curr_ods.mean_value) ']']; %#ok<SAGROW>
+            legends{end+1} = [methods(ii).name ' [' sprintf('%0.3f',curr_ods.mean_value) ']']; %#ok<SAGROW>
         end
     end
     

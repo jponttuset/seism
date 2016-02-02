@@ -107,5 +107,6 @@ for ii in range(id_start-1,id_end):
 
     if run==1:
         command_to_run = "/usr/sepp/bin/matlab -nodesktop -nodisplay -nosplash -r \"install;eval_method('"+method+"','"+all_params[ii]+"','fb',@read_one_cont_png,'"+gt_set+"',"+str(n_ims)+",1);exit\""
+        #command_to_run = "/usr/sepp/bin/matlab -nodesktop -nodisplay -nosplash -r \"install;eval_method('"+method+"','"+all_params[ii]+"','fb',@read_one_ucm,'"+gt_set+"',"+str(n_ims)+",0);exit\""
         os.system(command_to_run)
 
