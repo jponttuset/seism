@@ -34,7 +34,8 @@
 
 %% Experiments parameters
 % BSDS500 set: train, test, val, trainval, or all
-gt_set = 'test';
+database = 'bsds500';
+gt_set   = 'test';
 
 % Precision-recall measures
 measures = {'fb' ,... % Precision-recall for boundaries
@@ -71,6 +72,7 @@ end
 % Evaluate contours using the correct reading function
 % eval_method_all_params('HED', 'fb', @read_one_cont_png, gt_set, 1)
 
+test_io(methods, database, gt_set);
 
 %% Plot PR curves
 for kk=1:length(measures)
