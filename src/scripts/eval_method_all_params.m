@@ -14,7 +14,7 @@
 %  Jordi Pont-Tuset <jordi.pont@upc.edu>
 %  March 2011
 % ------------------------------------------------------------------------ 
-function eval_method_all_params(method, measure, read_part_fun, gt_set, segm_or_contour)
+function eval_method_all_params(method, measure, read_part_fun, database, gt_set, segm_or_contour)
 
 % Is it a partition or a contour detection?
 if ~exist('segm_or_contour','var')
@@ -39,7 +39,7 @@ disp(['Total number of parameterizations: ' num2str(ii)])
 %     parameter   = experiments(nn).parameter;
 %     measure     = experiments(nn).measure;
 %     disp(['Starting: ' method_name ' (' parameter ') for measure ' measure ' on ' gt_set])
-%     eval_method(method_name, parameter, measure, read_part_fun, gt_set, length(params), segm_or_contour)
+%     eval_method(method_name, parameter, measure, read_part_fun, database,  gt_set, length(params), segm_or_contour)
 %     disp(['Done:     ' method_name ' (' parameter ') for measure ' measure ' on ' gt_set])
 % end
 % matlabpool close;
@@ -50,7 +50,7 @@ for nn=1:length(experiments)
     eval_method(experiments(nn).method,...
                 experiments(nn).parameter,...
                 experiments(nn).measure,...
-                read_part_fun, gt_set, length(params), segm_or_contour);
+                read_part_fun, database, gt_set, length(params), segm_or_contour);
 end
 
 

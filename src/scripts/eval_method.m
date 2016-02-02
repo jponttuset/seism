@@ -12,18 +12,18 @@
 %  "Measures and Meta-Measures for the Supervised Evaluation of Image Segmentation,"
 %  Computer Vision and Pattern Recognition (CVPR), 2013.
 % ------------------------------------------------------------------------
-function eval_method(method, parameter, measure, read_part_fun, gt_set, num_params, segm_or_contour)
+function eval_method(method, parameter, measure, read_part_fun, database, gt_set, num_params, segm_or_contour)
 
 if ~exist('segm_or_contour','var')
     segm_or_contour = 0;
 end
 
-% Load BSDS500 indices
-im_ids = db_ids('BSDS500',gt_set);
+% Load indices
+im_ids = db_ids(database, gt_set);
 
 % I/O folders
-method_dir = fullfile(seism_root,'datasets',method);
-res_dir    = fullfile(seism_root,'results', method);
+method_dir = fullfile(seism_root,'datasets',database,method);
+res_dir    = fullfile(seism_root,'results' ,database,method);
 if ~exist(res_dir,'dir')
     mkdir(res_dir)
 end
@@ -55,10 +55,10 @@ end
 for ii=1:numel(im_ids)
     % Display evolution      
     % disp([num2str(ii) ' out of ' num2str(numel(im_ids))])
-    curr_id = im_ids(ii);
+    curr_id = im_ids{ii};
 
     % Read ground truth (gt_seg)
-    gt_seg = db_gt();
+    gt_seg = db_gt(database,curr_id);
     
     % Read the partition
     partition_or_contour = read_part_fun(method_dir, parameter, num2str(curr_id));
@@ -69,7 +69,7 @@ for ii=1:numel(im_ids)
     end
     
     % Rotate if necessary (different image)
-    if ~isequal(size(gt_seg{1}), size(partition_or_contour)) %#ok<USENS>
+    if ~isequal(size(gt_seg{1}), size(partition_or_contour))
         partition_or_contour = imrotate(partition_or_contour,90);
     end
     

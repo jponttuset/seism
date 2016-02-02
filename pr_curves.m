@@ -34,7 +34,7 @@
 
 %% Experiments parameters
 % BSDS500 set: train, test, val, trainval, or all
-database = 'bsds500';
+database = 'BSDS500';
 gt_set   = 'test';
 
 % Precision-recall measures
@@ -43,16 +43,17 @@ measures = {'fb' ,... % Precision-recall for boundaries
  
 % Define all methods to be compared
 methods  = [];
-methods(end+1).name = 'HED'    ; methods(end).io_func = @read_one_cont_png;
-methods(end+1).name = 'LEP'    ; methods(end).io_func = @read_one_lep;
-% methods(end+1).name = 'iscra'  ; methods(end).io_func = @read_one_ucm;
-methods(end+1).name = 'MCG'    ; methods(end).io_func = @read_one_ucm;
-methods(end+1).name = 'gPb-UCM'; methods(end).io_func = @read_one_ucm;
-methods(end+1).name = 'NWMC'   ; methods(end).io_func = @read_one_ucm;
-methods(end+1).name = 'IIDKL'  ; methods(end).io_func = @read_one_ucm;
-methods(end+1).name = 'EGB'    ; methods(end).io_func = @read_one_prl;
-methods(end+1).name = 'MShift' ; methods(end).io_func = @read_one_prl;
-methods(end+1).name = 'NCut'   ; methods(end).io_func = @read_one_prl;
+methods(end+1).name = 'HED'     ; methods(end).io_func = @read_one_cont_png;
+methods(end+1).name = 'LEP'     ; methods(end).io_func = @read_one_lep;
+% methods(end+1).name = 'ISCRA'   ; methods(end).io_func = @read_one_ucm;
+methods(end+1).name = 'MCG'     ; methods(end).io_func = @read_one_ucm;
+methods(end+1).name = 'gPb-UCM' ; methods(end).io_func = @read_one_ucm;
+methods(end+1).name = 'NWMC'    ; methods(end).io_func = @read_one_ucm;
+methods(end+1).name = 'IIDKL'   ; methods(end).io_func = @read_one_ucm;
+methods(end+1).name = 'EGB'     ; methods(end).io_func = @read_one_prl;
+methods(end+1).name = 'MShift'  ; methods(end).io_func = @read_one_prl;
+methods(end+1).name = 'NCut'    ; methods(end).io_func = @read_one_prl;
+% methods(end+1).name = 'QuadTree'; methods(end).io_func = @read_one_ucm;
 
 % Which of these are only contours?
 which_contours = {'HED'};
@@ -65,7 +66,7 @@ colors = {'k','g','b','r','m','c','y','r','k','g','b'};
 % Evaluate partitions using the correct reading function
 for ii=1:length(measures)
     for jj=1:length(methods)
-        eval_method_all_params(methods(jj).name, measures{ii}, methods(jj).io_func, gt_set)
+        eval_method_all_params(methods(jj).name, measures{ii}, methods(jj).io_func, database, gt_set)
     end
 end
 
