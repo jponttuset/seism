@@ -23,7 +23,7 @@ function [thrs,cntR,sumR,cntP,sumP,V] = edgesEvalImg( E, G, varargin )
 %
 % INPUTS
 %  E          - [h x w] edge probability map (may be a filename)
-%  G          - file containing a cell of ground truth boundaries
+%  G          - file containing a cell of ground truth segmentation (for SEISM)
 %  prms       - parameters (struct or name/value pairs)
 %   .out        - [''] optional output file for writing results
 %   .thrs       - [99] number or vector of thresholds for evaluation

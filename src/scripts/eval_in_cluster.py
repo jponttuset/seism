@@ -10,14 +10,14 @@
 
 # ------------- Examples of usage --------------
 # qsub -N evalFb -t 1-100 eval_in_cluster.py HED     read_one_cont_png fb 1 100
-# qsub -N evalFb -t 1-100 eval_in_cluster.py LEP     read_one_lep      fb 1 100
-# qsub -N evalFb -t 1-100 eval_in_cluster.py MCG     read_one_ucm      fb 1 100
-# qsub -N evalFb -t 1-100 eval_in_cluster.py gPb-UCM read_one_ucm      fb 1 100
-# qsub -N evalFb -t 1-100 eval_in_cluster.py NWMC    read_one_ucm      fb 1 100
-# qsub -N evalFb -t 1-100 eval_in_cluster.py IIDKL   read_one_ucm      fb 1 100
-# qsub -N evalFb -t 1-100 eval_in_cluster.py EGB     read_one_prl      fb 1 100
-# qsub -N evalFb -t 1-100 eval_in_cluster.py MShift  read_one_prl      fb 1 100
-# qsub -N evalFb -t 1-100 eval_in_cluster.py NCut    read_one_prl      fb 1 100
+# qsub -N evalFb -t 1-100 eval_in_cluster.py LEP     read_one_lep      fb 0 100
+# qsub -N evalFb -t 1-100 eval_in_cluster.py MCG     read_one_ucm      fb 0 100
+# qsub -N evalFb -t 1-100 eval_in_cluster.py gPb-UCM read_one_ucm      fb 0 100
+# qsub -N evalFb -t 1-100 eval_in_cluster.py NWMC    read_one_ucm      fb 0 100
+# qsub -N evalFb -t 1-100 eval_in_cluster.py IIDKL   read_one_ucm      fb 0 100
+# qsub -N evalFb -t 1-100 eval_in_cluster.py EGB     read_one_prl      fb 0 100
+# qsub -N evalFb -t 1-100 eval_in_cluster.py MShift  read_one_prl      fb 0 100
+# qsub -N evalFb -t 1-100 eval_in_cluster.py NCut    read_one_prl      fb 0 100
 
 # qsub -N evalFop -t 1-20 eval_in_cluster.py LEP     read_one_lep      fop 0 20
 # qsub -N evalFop -t 1-20 eval_in_cluster.py MCG     read_one_ucm      fop 0 20
@@ -129,5 +129,6 @@ for ii in range(id_start-1,id_end):
 
     if run==1:
         command_to_run = "/usr/sepp/bin/matlab -nodesktop -nodisplay -nosplash -r \"install;eval_method('"+method+"','"+all_params[ii]+"','"+measure+"',@"+io_func+",'"+database+"','"+gt_set+"',"+str(n_ims)+","+contour+");exit\""
+        #print command_to_run
         os.system(command_to_run)
 
