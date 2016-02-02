@@ -18,18 +18,25 @@
 % To evaluate your method in the precision-recall enviroments you have to
 % follow the following steps:
 %
-%  1) Create a folder inside "datasets" with a descriptive name e.g. "mymethod".
-%  2) Create as many subfloders as working points you method has (e.g.
-%     thresholds in UCM).
-%  3) Create a file named "params.txt" with all the parameters sorted as wished.
-%  4) Write your partitions in PRL format (prl_write provided) in the
-%     corresponding parameter subfolder. The name must be $id_$param.txt,
-%     where $id refers to the BSDS500 image id and $param is the value of the
-%     parameter (name of the subfolder). See the available folders as
-%     examples.
-%  5) Evaluate your method with the piece of code below (just once, comment it when done)
-%  6) Add your method to the list of methods to display.
-%  7) Run the rest of the code and enjoy your PR curves!
+%  1) Create a file in the folder "parameters" with name "mymethod.txt" 
+%     with all the different value of a parameter indexing different working
+%     points of your method, sorted as wished. (e.g. UCM thresholds)
+%  2) Create a folder inside "datasets" with a descriptive name e.g. "mymethod".
+%     Store a file for each image inside the folder, from which a partition
+%     or contour can be extracted given a value of "parameters".
+%     (e.g. a file with a variable 'ucm2')
+%  3) Create or choose an I/O function that returns a partition or a
+%     contour given a result file and a parameter. See 'read_one_cont_png',
+%     'read_one_ucm' in 'src/io' for examples.
+%  4) The output of your I/O function can be:
+%      - A partition (closed contours): Must be a unit32 matrix of labels 1,...,N
+%      - A contour detection: Must be a binary image with contour pixels marked
+%  5) Evaluate your method with the piece of code below with the function
+%     'eval_method_all_params' (just once, comment it when done)
+%     If the results are contours, remember to add your method to
+%     the list 'which_contours'.
+%  6) Add your method to the list of methods to display, run the rest of
+%     the code and enjoy your PR curves!
 % ------------------------------------------------------------------------ 
 
 %% Experiments parameters
@@ -47,12 +54,12 @@ methods(end+1).name = 'HED'     ; methods(end).io_func = @read_one_cont_png;
 methods(end+1).name = 'LEP'     ; methods(end).io_func = @read_one_lep;
 % methods(end+1).name = 'ISCRA'   ; methods(end).io_func = @read_one_ucm;
 methods(end+1).name = 'MCG'     ; methods(end).io_func = @read_one_ucm;
-methods(end+1).name = 'gPb-UCM' ; methods(end).io_func = @read_one_ucm;
-methods(end+1).name = 'NWMC'    ; methods(end).io_func = @read_one_ucm;
-methods(end+1).name = 'IIDKL'   ; methods(end).io_func = @read_one_ucm;
-methods(end+1).name = 'EGB'     ; methods(end).io_func = @read_one_prl;
-methods(end+1).name = 'MShift'  ; methods(end).io_func = @read_one_prl;
-methods(end+1).name = 'NCut'    ; methods(end).io_func = @read_one_prl;
+% methods(end+1).name = 'gPb-UCM' ; methods(end).io_func = @read_one_ucm;
+% methods(end+1).name = 'NWMC'    ; methods(end).io_func = @read_one_ucm;
+% methods(end+1).name = 'IIDKL'   ; methods(end).io_func = @read_one_ucm;
+% methods(end+1).name = 'EGB'     ; methods(end).io_func = @read_one_prl;
+% methods(end+1).name = 'MShift'  ; methods(end).io_func = @read_one_prl;
+% methods(end+1).name = 'NCut'    ; methods(end).io_func = @read_one_prl;
 % methods(end+1).name = 'QuadTree'; methods(end).io_func = @read_one_ucm;
 
 % Which of these are only contours?
@@ -63,17 +70,19 @@ colors = {'k','g','b','r','m','c','y','r','k','g','b'};
 
 %% Evaluate your method (just once for all parameters)
 
-% Evaluate partitions using the correct reading function
+% Evaluate using the correct reading function
 for ii=1:length(measures)
     for jj=1:length(methods)
-        eval_method_all_params(methods(jj).name, measures{ii}, methods(jj).io_func, database, gt_set)
+        % Contours only in 'fb'
+        is_cont = any(ismember(which_contours,methods(ii).name));
+        if strcmp(measures{kk},'fb') || ~is_cont
+            eval_method_all_params(methods(jj).name, measures{ii}, methods(jj).io_func, database, gt_set, is_cont)
+        end
     end
 end
 
-% Evaluate contours using the correct reading function
-% eval_method_all_params('HED', 'fb', @read_one_cont_png, gt_set, 1)
-
-test_io(methods, database, gt_set);
+% % Helper to check existence of files
+% test_io(methods, database, gt_set);
 
 %% Plot PR curves
 for kk=1:length(measures)
@@ -81,23 +90,23 @@ for kk=1:length(measures)
     fig_handlers = [];
     legends = {};
     
-    % Plot human
-    human_same = gather_human(measures{kk}, 'same', gt_set, 'human_perf');
-    human_diff = gather_human(measures{kk}, 'diff', gt_set, 'human_perf');
-    fig_handlers(end+1) = plot(human_same.mean_rec,human_same.mean_prec, 'rd'); %#ok<SAGROW>
-    plot(human_diff.mean_rec,human_diff.mean_prec, 'rd');
-    legends{end+1} = 'Human'; %#ok<SAGROW>
+%     % Plot human
+%     human_same = gather_human(measures{kk}, 'same', database, gt_set, 'human_perf');
+%     human_diff = gather_human(measures{kk}, 'diff', database, gt_set, 'human_perf');
+%     fig_handlers(end+1) = plot(human_same.mean_rec,human_same.mean_prec, 'rd'); %#ok<SAGROW>
+%     plot(human_diff.mean_rec,human_diff.mean_prec, 'rd');
+%     legends{end+1} = 'Human'; %#ok<SAGROW>
     
     % Plot methods
     for ii=1:length(methods)
         
         % Plot the contours only in 'fb'
-        if strcmp(measures{kk},'fb') || all(~ismember(which_contours,methods{ii}))
+        if strcmp(measures{kk},'fb') || all(~ismember(which_contours,methods(ii).name))
             % Get all parameters for that method from file
             params = get_method_parameters(methods(ii).name);
 
             % Gather pre-computed results
-            curr_meas = gather_measure(methods(ii).name,params,measures{kk},gt_set);
+            curr_meas = gather_measure(methods(ii).name,params,measures{kk},database,gt_set);
             curr_ods = general_ods(curr_meas);
             curr_ois = general_ois(curr_meas);
 

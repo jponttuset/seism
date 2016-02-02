@@ -1,4 +1,4 @@
-function stats = gather_human(measure, type, gt_set, generalization_type)
+function stats = gather_human(measure, type, database, gt_set, generalization_type)
 % stats = gather_human(measure, type, gt_set)
 % ------------------------------------------------------------------------ 
 %  Copyright (C)
@@ -9,7 +9,7 @@ function stats = gather_human(measure, type, gt_set, generalization_type)
 % ------------------------------------------------------------------------ 
 
 % Get data
-results_dir = fullfile(seism_root, 'results', 'human');
+results_dir = fullfile(seism_root, 'results', database, 'human');
 curr_results = load(fullfile(results_dir, [generalization_type '_' gt_set '_' type '_' measure '.txt']));
 
 % Gather results
