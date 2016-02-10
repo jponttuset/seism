@@ -42,7 +42,7 @@
 %% Experiments parameters
 % BSDS500 set: train, test, val, trainval, or all
 database = 'BSDS500';
-gt_set   = 'val';
+gt_set   = 'test';
 
 % Precision-recall measures
 measures = {'fb' ,... % Precision-recall for boundaries
@@ -52,15 +52,15 @@ measures = {'fb' ,... % Precision-recall for boundaries
 methods  = [];
 methods(end+1).name = 'HED'     ; methods(end).io_func = @read_one_cont_png;
 methods(end+1).name = 'LEP'     ; methods(end).io_func = @read_one_lep;
-% methods(end+1).name = 'ISCRA'   ; methods(end).io_func = @read_one_ucm;
 methods(end+1).name = 'MCG'     ; methods(end).io_func = @read_one_ucm;
+methods(end+1).name = 'ISCRA'   ; methods(end).io_func = @read_one_ucm;
 methods(end+1).name = 'gPb-UCM' ; methods(end).io_func = @read_one_ucm;
-% methods(end+1).name = 'NWMC'    ; methods(end).io_func = @read_one_ucm;
-% methods(end+1).name = 'IIDKL'   ; methods(end).io_func = @read_one_ucm;
-% methods(end+1).name = 'EGB'     ; methods(end).io_func = @read_one_prl;
-% methods(end+1).name = 'MShift'  ; methods(end).io_func = @read_one_prl;
-% methods(end+1).name = 'NCut'    ; methods(end).io_func = @read_one_prl;
-% methods(end+1).name = 'QuadTree'; methods(end).io_func = @read_one_ucm;
+methods(end+1).name = 'NWMC'    ; methods(end).io_func = @read_one_ucm;
+methods(end+1).name = 'IIDKL'   ; methods(end).io_func = @read_one_ucm;
+methods(end+1).name = 'EGB'     ; methods(end).io_func = @read_one_prl;
+methods(end+1).name = 'MShift'  ; methods(end).io_func = @read_one_prl;
+methods(end+1).name = 'NCut'    ; methods(end).io_func = @read_one_prl;
+methods(end+1).name = 'QuadTree'; methods(end).io_func = @read_one_ucm;
 
 % Which of these are only contours?
 which_contours = {'HED'};
@@ -71,15 +71,15 @@ colors = {'k','g','b','r','m','c','y','r','k','g','b'};
 %% Evaluate your method (just once for all parameters)
 
 % Evaluate using the correct reading function
-for ii=1:length(measures)
-    for jj=1:length(methods)
-        % Contours only in 'fb'
-        is_cont = any(ismember(which_contours,methods(ii).name));
-        if strcmp(measures{kk},'fb') || ~is_cont
-            eval_method_all_params(methods(jj).name, measures{ii}, methods(jj).io_func, database, gt_set, is_cont)
-        end
-    end
-end
+% for ii=1:length(measures)
+%     for jj=1:length(methods)
+%         % Contours only in 'fb'
+%         is_cont = any(ismember(which_contours,methods(ii).name));
+%         if strcmp(measures{ii},'fb') || ~is_cont
+%             eval_method_all_params(methods(jj).name, measures{ii}, methods(jj).io_func, database, gt_set, is_cont)
+%         end
+%     end
+% end
 
 % % Helper to check existence of files
 % test_io(methods, database, gt_set);
@@ -113,7 +113,7 @@ for kk=1:length(measures)
             % Plot method
             fig_handlers(end+1) = plot(curr_meas.mean_rec,curr_meas.mean_prec,[colors{ii} '-']); %#ok<SAGROW>
             plot(curr_ods.mean_rec,curr_ods.mean_prec,[colors{ii} '*'])
-            legends{end+1} = [methods(ii).name ' [' sprintf('%0.3f',curr_ods.mean_value) ']']; %#ok<SAGROW>
+            legends{end+1} = [methods(ii).name ' [' sprintf('%0.3f',curr_ods.mean_value) '-' sprintf('%0.3f',curr_ois.mean_value) ']']; %#ok<SAGROW>
         end
     end
     
