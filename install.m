@@ -39,6 +39,15 @@ addpath(seism_root);
 addpath(fullfile(seism_root,'lib'));
 addpath(genpath(fullfile(seism_root,'src')));
 
+% Check the db_root_dir is set
+if ~exist(db_root_dir('BSDS500'),'dir')
+    disp('---')
+    disp('WARNING: The BSDS500 directory was not found in:')
+    disp([' ' db_root_dir('BSDS500')])
+    disp('Have you set the directory in "src/gt_wrappers/db_root_dir.m"?')
+    disp('---')
+end
+
 % Check that the needed functions are compiled
 if exist('correspondPixels')~=3 %#ok<EXIST>
     disp('The needed function (correspondPixels) not found in piotr_edges.')

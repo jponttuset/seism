@@ -13,6 +13,12 @@
 % ------------------------------------------------------------------------
 function [ground_truth, gt_set, im, anns] = db_gt( database, image_id )
 
+    % Check the folder exists
+    if ~exist(db_root_dir(database),'dir')
+        error(['Database roor dir ''' db_root_dir(database) ''' not found']);
+    end
+    
+    
     if strcmp(database,'Pascal') 
         % Load Object and Class ground truth
         gt_object = imread(fullfile(db_root_dir(database), 'SegmentationObject', [image_id '.png']));
@@ -140,8 +146,16 @@ function [ground_truth, gt_set, im, anns] = db_gt( database, image_id )
         % Valid pixels (to make it compatible with SBD and Pascal)
         ground_truth.valid_pixels = (gt_object<255);
     elseif strcmp(database,'BSDS500')
-        % Load GT in the original format
-        gt = loadvar(fullfile(db_root_dir(database), 'groundTruth.original', [image_id '.mat']),'groundTruth');
+        % Look for the file
+        if exist(fullfile(db_root_dir(database), 'data', 'groundTruth', 'train', [image_id '.mat']),'file')
+            gt = loadvar(fullfile(db_root_dir(database), 'data', 'groundTruth', 'train', [image_id '.mat']),'groundTruth');
+        elseif exist(fullfile(db_root_dir(database), 'data', 'groundTruth', 'val', [image_id '.mat']),'file')
+            gt = loadvar(fullfile(db_root_dir(database), 'data', 'groundTruth', 'val', [image_id '.mat']),'groundTruth');
+        elseif exist(fullfile(db_root_dir(database), 'data', 'groundTruth', 'test', [image_id '.mat']),'file')
+            gt = loadvar(fullfile(db_root_dir(database), 'data', 'groundTruth', 'test', [image_id '.mat']),'groundTruth');
+        else
+            error(['Ground truth for image ' image_id ' not found in ' fullfile(db_root_dir(database), 'data', 'groundTruth')]);
+        end
         
         % Store it as cell of partitions
         ground_truth = cell(1,length(gt));

@@ -1,3 +1,4 @@
+
 This file is the README file of the package SEISM, which
 contains the code of the segmentation evaluation measures presented in:
 
@@ -9,21 +10,31 @@ Jordi Pont-Tuset, Ferran Marques,
 "Measures and Meta-Measures for the Supervised Evaluation of Image Segmentation,"
 Computer Vision and Pattern Recognition (CVPR), 2013.
 
+Visit the project page at:
+http://vision.ee.ethz.ch/~biwiproposals/seism/
+
 All the results, figures, and tables of the paper are reproducible
 using this code.
 
-To use the package:
 
-1) BUILD: For mac64 and linux64 architectures, the library comes pre-built.
-   If for some reason you need to rebuild it, see "build.m"
+#################### USAGE ####################
 
-2) INSTALL: Run the script "install.m", which adds the needed folders to the
+1) BSDS500: Download the dataset from:
+   http://www.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/resources.html
+   Then edit the file "src/gt_wrappers/db_root_dir.m" to point to the 'BSDS500'
+   uncompressed folder, where there is a folder named "data."
+
+2) BUILD: For mac64 and linux64 architectures, the library comes pre-built.
+   If for some reason you need to rebuild it, see "build.m."
+
+3) INSTALL: Run the script "install.m", which adds the needed folders to the
    MATLAB path and checks the dependencies. You can add the paths permanently 
-   if you do not want to run this script each time. This script checks for 
-   the dependencies needed and will prompt any error it finds.
+   if you do not want to run this script each time.
 
-For a basic use of the mesures use "eval_segm" (see "demo.m")
 
-To evaluate your method in the precision-recall environment (recommended), see "pr_curves.m".
+See "demo.m" for a basic use of the mesures use "eval_segm".
+See "pr_curves.m" to evaluate your method in the precision-recall environment (recommended).
+
+###############################################
 
 Enjoy! (And please cite the paper if you use this code.)

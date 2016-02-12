@@ -10,7 +10,7 @@ measures = {'fb' ,... % Precision-recall for boundaries
             };
 
 % List of segmentation methods to evaluate
-methods   = {'LEP'}; 
+methods   = {'LEP', 'MCG', 'gPb-UCM', 'ISCRA', 'NWMC', 'IIDKL', 'EGB', 'MShift', 'NCut', 'QuadTree'};
 
 out_dir = '~';
 
