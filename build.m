@@ -26,8 +26,11 @@ function build()
 
 %% Include paths and files to compile
 include{1} = fullfile(seism_root, 'src');  % Own files
-include{2} = '/opt/local/include';  % Boost libraries (change it if necessary)
-
+if ispc()
+    include{2} = '"C:\Program Files\boost_1_55_0"';
+else
+    include{2} = '/opt/local/include';  % Boost libraries (change it if necessary)
+end
 build_file{1} = fullfile(seism_root, 'src', 'io', 'prl', 'mex_prl_read.cpp');
 build_file{2} = fullfile(seism_root, 'src', 'io', 'prl', 'mex_prl_write.cpp');
 build_file{3} = fullfile(seism_root, 'src', 'measures', 'mex_eval_segm.cpp');
