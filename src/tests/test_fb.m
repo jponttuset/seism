@@ -8,5 +8,9 @@ im_ids = db_ids(database,'val');
 
 % Check extreme case, where we know that recall is almost 1
 cont = read_one_cont_png(fullfile(seism_root,'datasets',database,'HED'), '0.01', im_ids{1});
+
+if isempty(cont)
+    error(['The result in ''' fullfile(seism_root,'datasets',database,'HED') ''' not found'])
+end
 gt = db_gt(database,im_ids{1});
 value = eval_cont(cont,gt) %#ok<NOPTS>

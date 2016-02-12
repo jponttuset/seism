@@ -26,6 +26,11 @@ if ~iscell(ground_truth)
     ground_truth = {ground_truth};
 end
 
+% Check same sizes
+if ~isequal(size(contours,ground_truth{1}))
+    error('''contours'' and ''ground_truth'' must have the same size')
+end
+
 % Call Piotr's edges code
 [~,cntR,sumR,cntP,sumP] = edgesEvalImg(contours,ground_truth);
 

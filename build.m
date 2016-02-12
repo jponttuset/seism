@@ -31,6 +31,7 @@ include{2} = '/opt/local/include';  % Boost libraries (change it if necessary)
 build_file{1} = fullfile(seism_root, 'src', 'io', 'prl', 'mex_prl_read.cpp');
 build_file{2} = fullfile(seism_root, 'src', 'io', 'prl', 'mex_prl_write.cpp');
 build_file{3} = fullfile(seism_root, 'src', 'measures', 'mex_eval_segm.cpp');
+build_file{4} = fullfile(seism_root, 'src', 'tests', 'mex_test_matlab_multiarray.cpp');
 
 
 %% %% Build everything
