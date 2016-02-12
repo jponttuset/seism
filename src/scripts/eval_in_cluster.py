@@ -12,6 +12,7 @@
 # qsub -N evalFb -t 1-100 eval_in_cluster.py HED     read_one_cont_png fb 1 100
 # qsub -N evalFb -t 1-100 eval_in_cluster.py LEP     read_one_lep      fb 0 100
 # qsub -N evalFb -t 1-100 eval_in_cluster.py MCG     read_one_ucm      fb 0 100
+# qsub -N evalFb -t 1-100 eval_in_cluster.py ISCRA   read_one_ucm      fb 0 100
 # qsub -N evalFb -t 1-100 eval_in_cluster.py gPb-UCM read_one_ucm      fb 0 100
 # qsub -N evalFb -t 1-100 eval_in_cluster.py NWMC    read_one_ucm      fb 0 100
 # qsub -N evalFb -t 1-100 eval_in_cluster.py IIDKL   read_one_ucm      fb 0 100
@@ -30,7 +31,7 @@
 
 # ------------Hard-Coded Parameters ------------
 database = 'BSDS500'
-gt_set   = 'val'
+gt_set   = 'test'
 
 # ----------------- Imports --------------------
 import os
@@ -40,6 +41,7 @@ import sys
 
 # ---------------- Functions -------------------
 def file_len(fname):
+    i = -1
     with open(fname) as f:
         for i, l in enumerate(f):
             pass
