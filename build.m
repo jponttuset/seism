@@ -18,9 +18,6 @@
 % This function builds all the MEX files needed.
 % Dependencies: Boost libraries
 %
-% Not checked for windows, you (at least) will need to change the boost
-% libraries location.
-%
 % ------------------------------------------------------------------------
 function build()
 
