@@ -24,7 +24,7 @@ using this code.
    Then edit the file "src/gt_wrappers/db_root_dir.m" to point to the 'BSDS500'
    uncompressed folder, where there is a folder named "data."
 
-2) BUILD: For mac64 and linux64 architectures, the library comes pre-built.
+2) BUILD: For mac64, linux64, and win64 architectures, the library comes pre-built.
    If for some reason you need to rebuild it, see "build.m."
 
 3) INSTALL: Run the script "install.m", which adds the needed folders to the
