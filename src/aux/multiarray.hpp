@@ -33,7 +33,6 @@
 
 #include <aux/config.hpp>
 #include <aux/types.hpp>
-#include <aux/exceptions.hpp>
 
 
 
@@ -235,7 +234,7 @@ class MultiArray : public boost::multi_array<T,D>
         //! \param[in] width  : X size of the MultiArray
         //! \param[in] height : Y size of the MultiArray
         //!
-        MultiArray( uint64 width, uint64 height ) throw (ImagePlusError);
+        MultiArray( uint64 width, uint64 height );
 
         //!
         //! \brief Constructor for 3 dimensions
@@ -356,7 +355,7 @@ class MultiArray : public boost::multi_array<T,D>
         //!
         //! \return Reference to (this) so a = b = c; works.
         //!
-        const MultiArray& operator=( const MultiArray& copy ) throw (ImagePlusError);
+        const MultiArray& operator=( const MultiArray& copy );
 
         //!
         //! \brief Assignment operator for boost:multi_array
@@ -365,7 +364,7 @@ class MultiArray : public boost::multi_array<T,D>
         //!
         //! \return Reference to (this) so a = b = c; works.
         //!
-        const MultiArray& operator=( const multi_array_base& copy ) throw (ImagePlusError);
+        const MultiArray& operator=( const multi_array_base& copy );
 
         //!
         //! \brief Assignment operator for boost:multi_array views
@@ -450,7 +449,6 @@ class MultiArray : public boost::multi_array<T,D>
          */
         T& operator()(DataIndex data_index)
         {
-            ASSERT(data_index() < this->num_elements(), "MultiArray::operator()(std::size_t data_index): data_index out of range " )
             return this->data()[data_index()];
         }
 
@@ -462,7 +460,6 @@ class MultiArray : public boost::multi_array<T,D>
 
         const T& operator()(DataIndex data_index) const
         {
-            ASSERT(data_index() < this->num_elements(), "MultiArray::operator()(std::size_t data_index): data_index out of range " )
             return this->data()[data_index()];
         }
 
@@ -491,8 +488,6 @@ class MultiArray : public boost::multi_array<T,D>
         template<std::size_t S>
         const MultiArray& operator=( const boost::array<T,S> & array )
         {
-            ASSERT(D==1, "operator=(const boost::array<T,S> array) only works with  1 dimension." )
-
             std::size_t nelem = this->num_elements();
 
             // resize to array size if needed
@@ -609,11 +604,9 @@ MultiArray<T,D>::MultiArray(const multi_array_base& ma)
 
 template<typename T, std::size_t D>
 IMAGEPLUS_INLINE
-MultiArray<T,D>::MultiArray( uint64 width, uint64 height ) throw (ImagePlusError)
+MultiArray<T,D>::MultiArray( uint64 width, uint64 height )
         : multi_array_base(empty_extents(),boost::fortran_storage_order())
 {
-    ASSERT(D==2, "Constructor(x,y) only works with 2 dimensions.")
-
     std::vector<uint64> shape(2);
     shape[0] = width; shape[1] = height;
     this->resize(shape);
@@ -631,8 +624,6 @@ IMAGEPLUS_INLINE
 MultiArray<T,D>::MultiArray( uint64 width, uint64 height, uint64 depth )
         : multi_array_base(empty_extents(),boost::fortran_storage_order())
 {
-    ASSERT(D == 3, "Constructor MultyArray(x,y,z) only works with 3 dimensions.");
-
     std::vector<uint64> shape(3);
     shape[0] = width; shape[1] = height; shape[2] = depth;
     this->resize(shape);
@@ -697,8 +688,6 @@ template<typename T, std::size_t D>
 MultiArray<T,D>::MultiArray(const boost::numeric::ublas::matrix<T>& u)
         : multi_array_base(empty_extents(),boost::fortran_storage_order())
 {
-    ASSERT(D==2, "Constructor(ublas::matrix) only works with 2 dimensions." );
-
     // Create MultiArray of same size
     std::vector<uint64> shape(2);
     shape[0] = u.size2(); shape[1]=u.size1();
@@ -719,8 +708,6 @@ template<typename T, std::size_t D>
 MultiArray<T,D>::MultiArray(const boost::numeric::ublas::vector<T>& u)
         : multi_array_base(empty_extents(),boost::fortran_storage_order())
 {
-    ASSERT(D==1, "Constructor(ublas::vector) only works with 1 dimension." )
-
     // Create MultiArray of same size
     std::vector<uint64> shape(1);
     shape[0] = u.size();
@@ -784,7 +771,7 @@ MultiArray<T,D>::MultiArray(const const_view& v)
 
 template<typename T, std::size_t D>
 IMAGEPLUS_INLINE
-const MultiArray<T,D>& MultiArray<T,D>::operator=( const MultiArray<T,D>& copy ) throw (ImagePlusError)
+const MultiArray<T,D>& MultiArray<T,D>::operator=( const MultiArray<T,D>& copy )
 {
     if (&copy != this)
     {
@@ -804,16 +791,11 @@ const MultiArray<T,D>& MultiArray<T,D>::operator=( const MultiArray<T,D>& copy )
         // Now call the copy operator of the base class (with the same dimensions)
         multi_array_base::operator=(copy);
     }
-    else
-    {
-        throw ImagePlusError("MultiArray<T,D>::operator=: Self Assignment");
-    }
-
     return *this;
 }
 
 template<typename T, std::size_t D>
-const MultiArray<T,D>& MultiArray<T,D>::operator=( const multi_array_base& copy ) throw (ImagePlusError)
+const MultiArray<T,D>& MultiArray<T,D>::operator=( const multi_array_base& copy )
 {
     if (&copy != this)
     {
@@ -834,10 +816,6 @@ const MultiArray<T,D>& MultiArray<T,D>::operator=( const multi_array_base& copy 
 
         // Now call the copy operator of the base class (with the same dimensions)
         multi_array_base::operator=(copy);
-    }
-    else
-    {
-        throw ImagePlusError("MultiArray<T,D>::operator=(boost::multi_array): Self Assignment");
     }
 
     return *this;
@@ -991,8 +969,6 @@ template<typename T, std::size_t D>
 IMAGEPLUS_INLINE
 size_type MultiArray<T,D>::dims(size_type d) const
 {
-    ASSERT(d < D, "Number of dimensions exceeded: d=" << d << " D=" << D)
-
     return static_cast<size_type>(this->shape()[d]);
 }
 

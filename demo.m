@@ -38,7 +38,7 @@ measures = {%
             };
         
 % Compare a ground truth partition against the others
-load(fullfile(root_dir, 'bsds500','ground_truth','120003.mat'))
+gt_seg = db_gt('BSDS500','120003');
 partition = gt_seg{1};
 gt        = gt_seg(2:3);
 

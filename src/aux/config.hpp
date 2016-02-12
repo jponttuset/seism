@@ -98,7 +98,6 @@
 					{ 														  \
 						std::stringstream ss; 								  \
 						ss << __FILE__ << ":" << __LINE__ << " " << message;  \
-						throw imageplus::ImagePlusInternalError(ss.str());    \
 					}                                                         \
 				}
 	#endif
