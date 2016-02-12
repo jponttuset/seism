@@ -9,5 +9,3 @@ Jordi Pont-Tuset and Ferran Marques, TPAMI 2015.
 Jordi Pont-Tuset and Ferran Marques, CVPR 2013.
 
 More info at the [project page](https://imatge.upc.edu/web/resources/supervised-evaluation-image-segmentation). 
-
-NOTE: This code and project page will be updated very soon with the PAMI changes.
