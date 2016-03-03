@@ -5,6 +5,6 @@ function partition = read_one_lep(method_dir, parameter, im_id)
         partition = [];
     else
         segs = loadvar(res_file,'segs');
-        partition = uint32(segs{str2double(parameter)});
+        partition = uint32(relabel(segs{str2double(parameter)}));
     end
 end
