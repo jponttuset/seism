@@ -25,6 +25,14 @@ if strcmp(measure, 'fb') || strcmp(measure, 'fop') || strcmp(measure, 'fr')
 end
 stats.values = zeros(num_images, num_results);
 
+% Fb needs counts also
+if strcmp(measure, 'fb')
+    stats.cntR  = zeros(num_images, num_results);
+    stats.sumR  = zeros(num_images, num_results);
+    stats.cntP  = zeros(num_images, num_results);
+    stats.sumP  = zeros(num_images, num_results);
+end 
+
 % Scan all parameters
 for param_id = 1:num_results
     % Get data
@@ -32,16 +40,28 @@ for param_id = 1:num_results
     
     % Gather results
     if strcmp(measure, 'fb') || strcmp(measure, 'fop') || strcmp(measure, 'fr')
-        stats.prec  (:,param_id) = curr_results(:,2);
-        stats.rec   (:,param_id) = curr_results(:,3);
+        stats.prec(:,param_id) = curr_results(:,2);
+        stats.rec (:,param_id) = curr_results(:,3);
+    end
+    if strcmp(measure, 'fb')
+        stats.cntR(:,param_id) = curr_results(:,4);
+        stats.sumR(:,param_id) = curr_results(:,5);
+        stats.cntP(:,param_id) = curr_results(:,6);
+        stats.sumP(:,param_id) = curr_results(:,7);
     end
     stats.values(:,param_id) = curr_results(:,1);
 end
 
 % Compute statistics
 if strcmp(measure, 'fb') || strcmp(measure, 'fop') || strcmp(measure, 'fr')
-    stats.mean_prec  = mean(stats.prec);
-    stats.mean_rec   = mean(stats.rec);
+    cntR = sum(stats.cntR);
+    sumR = sum(stats.sumR);
+    cntP = sum(stats.cntP);
+    sumP = sum(stats.sumP);
+
+    stats.mean_rec  = cntR./sumR;
+    stats.mean_prec = cntP./sumP;
+    
     stats.mean_value = 2*(stats.mean_prec.*stats.mean_rec)./(stats.mean_prec+stats.mean_rec);
     
     % Check that there is no Nan in F
