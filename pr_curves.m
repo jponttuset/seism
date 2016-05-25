@@ -46,8 +46,9 @@ gt_set   = 'test';
 
 % Precision-recall measures
 measures = {'fb' ,... % Precision-recall for boundaries
-            'fop'};
- 
+            'fop',... % Precision-recall for objects and parts  
+            };
+              
 % Define all methods to be compared
 methods  = [];
 methods(end+1).name = 'HED'     ; methods(end).io_func = @read_one_cont_png;

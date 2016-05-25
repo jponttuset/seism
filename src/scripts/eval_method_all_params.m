@@ -25,9 +25,9 @@ end
 params = get_method_parameters(method);
 
 for ii=1:length(params)
-    experiments(ii).method = method; %#ok<AGROW>
+    experiments(ii).method    = method;     %#ok<AGROW>
     experiments(ii).parameter = params{ii}; %#ok<AGROW>
-    experiments(ii).measure = measure; %#ok<AGROW>
+    experiments(ii).measure   = measure;    %#ok<AGROW>
 end
 disp(['Total number of parameterizations: ' num2str(ii)])
 
