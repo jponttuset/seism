@@ -60,13 +60,13 @@ if strcmp(measure, 'fb') || strcmp(measure, 'fop') || strcmp(measure, 'fr')
         cntP = sum(stats.cntP);
         sumP = sum(stats.sumP);
         
-        stats.mean_rec  = cntR./sumR;
-        stats.mean_prec = cntP./sumP;
+        stats.mean_rec  = cntR./(sumR+eps);
+        stats.mean_prec = cntP./(sumP+eps);
     else
         stats.mean_prec  = mean(stats.prec);
         stats.mean_rec   = mean(stats.rec);
     end
-    stats.mean_value = 2*(stats.mean_prec.*stats.mean_rec)./(stats.mean_prec+stats.mean_rec);
+    stats.mean_value = 2*(stats.mean_prec.*stats.mean_rec)./(stats.mean_prec+stats.mean_rec+eps);
     
     % Check that there is no Nan in F
     if ~isempty(find(isnan(stats.mean_value), 1))

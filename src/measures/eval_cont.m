@@ -19,7 +19,7 @@
 %    Computer Vision and Pattern Recognition (CVPR), 2013.
 %  If you use this code, please consider citing the paper.
 % ------------------------------------------------------------------------ 
-function measure = eval_cont( contours, ground_truth )
+function measure = eval_cont( contours, ground_truth, maxDist, kill_internal )
 
 % If a single ground_truth, convert it to cell
 if ~iscell(ground_truth)
@@ -31,8 +31,17 @@ if ~isequal(size(contours),size(ground_truth{1}))
     error('''contours'' and ''ground_truth'' must have the same size')
 end
 
+if kill_internal,
+   for ii=1 : length(unique(ground_truth{1}))-1,
+       mask = (ground_truth{1}==ii);
+       gt_bdry = seg2bmap(mask);
+       contours = kill_internal_bdries(contours, gt_bdry, mask, maxDist);     
+   end
+end
+
 % Call Piotr's edges code
-[~,cntR,sumR,cntP,sumP] = edgesEvalImg(contours,ground_truth);
+params.maxDist = maxDist;
+[~,cntR,sumR,cntP,sumP] = edgesEvalImg(contours,ground_truth,params);
 
 % Compute precision-recall
 if sumR==0
