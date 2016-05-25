@@ -12,10 +12,20 @@
 %  "Measures and Meta-Measures for the Supervised Evaluation of Image Segmentation,"
 %  Computer Vision and Pattern Recognition (CVPR), 2013.
 % ------------------------------------------------------------------------
-function eval_method(method, parameter, measure, read_part_fun, database, gt_set, num_params, segm_or_contour)
+function eval_method(method, parameter, measure, read_part_fun, database, gt_set, num_params, segm_or_contour, cat_id)
 
 if ~exist('segm_or_contour','var')
     segm_or_contour = 0;
+end
+
+kill_internal = 0;
+if strcmp(database,'Pascal'),
+    maxDist = 0.01;
+elseif strcmp(database,'SBD'),
+    maxDist = 0.02;
+    kill_internal = 1;
+else
+    maxDist = 0.0075;
 end
 
 % Load indices
@@ -58,7 +68,11 @@ for ii=1:numel(im_ids)
     curr_id = im_ids{ii};
 
     % Read ground truth (gt_seg)
-    gt_seg = db_gt(database,curr_id);
+    if ~exist('cat_id','var')||(cat_id==0),
+        gt_seg = db_gt(database,curr_id);
+    else
+        gt_seg = db_gt(database,curr_id,cat_id);
+    end
     
     % Read the partition
     partition_or_contour = read_part_fun(method_dir, parameter, num2str(curr_id));
@@ -75,12 +89,12 @@ for ii=1:numel(im_ids)
     
     % Compute measure
     if segm_or_contour==0 % Segmentation
-        value = eval_segm(partition_or_contour,gt_seg,measure);
+        value = eval_segm(partition_or_contour,gt_seg,measure, maxDist, kill_internal);
     else % Contour
         if ~strcmp(measure,'fb')
             error('Contours can only be evaluated using the ''fb'' measure')
         end
-        value = eval_cont(partition_or_contour,gt_seg);
+        value = eval_cont(partition_or_contour, gt_seg, maxDist, kill_internal);
     end
     
     % Write to file
