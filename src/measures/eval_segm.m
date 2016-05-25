@@ -68,15 +68,33 @@ for ii=1:length(ground_truth)
 end
 
 if strcmp(measure,'fb')
-    % Compute  fb
-    [prec, rec] = fb(partition,ground_truth); 
-
+    [~,cntR,sumR,cntP,sumP] = edgesEvalImg( seg2bmap(partition), ground_truth);
+    if sumR==0
+        if cntP~=0
+            error('Something wrong with this result')
+        else
+            rec = 1;
+            prec = 0;
+        end
+    elseif sumP==0
+        if cntR~=0
+            error('Something wrong with this result')
+        else
+            rec = 0;
+            prec = 1;
+        end
+    else
+        rec = cntR/sumR;
+        prec = cntP/sumP;
+    end
+    
+    
     if (prec+rec)==0
         fmeas = 0;
     else
         fmeas = 2*prec*rec/(prec+rec);
     end
-    measure = [fmeas, prec, rec];
+    measure = [fmeas, prec, rec, cntR, sumR, cntP, sumP];
 elseif strcmp(measure,'vd')
     dhd  = mex_eval_segm(partition, ground_truth, 'dhd');
     sdhd = mex_eval_segm(partition, ground_truth, 'sdhd');

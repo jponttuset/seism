@@ -1,4 +1,4 @@
-% function measure = eval_cont( partition, ground_truth )
+% function measure = eval_cont( contours, ground_truth )
 %
 % OUTPUT
 %	measure:   Value of the measure. In the case of precision-recall 
@@ -27,7 +27,7 @@ if ~iscell(ground_truth)
 end
 
 % Check same sizes
-if ~isequal(size(contours,ground_truth{1}))
+if ~isequal(size(contours),size(ground_truth{1}))
     error('''contours'' and ''ground_truth'' must have the same size')
 end
 
@@ -60,7 +60,7 @@ if (prec+rec)==0
 else
     fmeas = 2*prec*rec/(prec+rec);
 end
-measure = [fmeas, prec, rec];
+measure = [fmeas, prec, rec, cntR, sumR, cntP, sumP];
 
 end
 
