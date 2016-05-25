@@ -59,14 +59,33 @@ if strcmp(measure, 'fb') || strcmp(measure, 'fop') || strcmp(measure, 'fr')
         sumR = sum(stats.sumR);
         cntP = sum(stats.cntP);
         sumP = sum(stats.sumP);
+      
+        % Allocate
+        stats.mean_rec  = zeros(size(sumP));
+        stats.mean_prec = zeros(size(sumP));
         
-        stats.mean_rec  = cntR./(sumR+eps);
-        stats.mean_prec = cntP./(sumP+eps);
+        % Compute precision-recall
+        assert(sum((sumR==0).*(cntP~=0))==0)
+        stats.mean_rec(logical((sumR==0).*(cntP==0))) = 1;
+        stats.mean_prec(logical((sumR==0).*(cntP==0))) = 0;
+        
+        assert(sum((sumP==0).*(cntR~=0))==0)
+        stats.mean_rec(logical((sumP==0).*(cntR==0))) = 0;
+        stats.mean_prec(logical((sumP==0).*(cntR==0))) = 1;
+        
+        stats.mean_rec(logical((sumP~=0).*(cntR~=0)))  = cntR(logical((sumP~=0).*(cntR~=0)))./sumR(logical((sumP~=0).*(cntR~=0)));
+        stats.mean_prec(logical((sumP~=0).*(cntR~=0))) = cntP(logical((sumP~=0).*(cntR~=0)))./sumP(logical((sumP~=0).*(cntR~=0)));
     else
         stats.mean_prec  = mean(stats.prec);
         stats.mean_rec   = mean(stats.rec);
     end
-    stats.mean_value = 2*(stats.mean_prec.*stats.mean_rec)./(stats.mean_prec+stats.mean_rec+eps);
+    
+    % Compute fb
+    stats.mean_value = zeros(size(sumP));
+    stats.mean_value((stats.mean_rec+stats.mean_prec)==0) = 0;
+    stats.mean_value((stats.mean_rec+stats.mean_prec)~=0) = ...
+        2*stats.mean_prec((stats.mean_rec+stats.mean_prec)~=0).*stats.mean_rec((stats.mean_rec+stats.mean_prec)~=0)...
+         ./stats.mean_prec((stats.mean_rec+stats.mean_prec)~=0)+stats.mean_rec((stats.mean_rec+stats.mean_prec)~=0);
     
     % Check that there is no Nan in F
     if ~isempty(find(isnan(stats.mean_value), 1))
