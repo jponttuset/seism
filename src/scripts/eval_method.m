@@ -1,4 +1,4 @@
-% function eval_partitions(method, parameter, measure, gt_set)
+% function eval_method(method, parameter, measure, read_part_fun, database, gt_set, num_params, segm_or_contour)
 % ------------------------------------------------------------------------ 
 %  Copyright (C)
 %  Universitat Politecnica de Catalunya BarcelonaTech (UPC) - Spain
