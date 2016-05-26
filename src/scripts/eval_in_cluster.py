@@ -68,8 +68,7 @@ else:
   	n_jobs = 1
 
 # ---- Get the working folder (code folder) ----
-#code_folder = os.getcwd()
-code_folder = '/srv/glusterfs/jpont/dev/seism_in_progress/'
+code_folder = '/srv/glusterfs/jpont/dev/seism-dev/'
 
 # Check that we are in the right folder
 if not os.path.isdir(code_folder + "/datasets/"):
