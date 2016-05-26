@@ -85,7 +85,7 @@ if strcmp(measure, 'fb') || strcmp(measure, 'fop') || strcmp(measure, 'fr')
     stats.mean_value((stats.mean_rec+stats.mean_prec)==0) = 0;
     stats.mean_value((stats.mean_rec+stats.mean_prec)~=0) = ...
         2*stats.mean_prec((stats.mean_rec+stats.mean_prec)~=0).*stats.mean_rec((stats.mean_rec+stats.mean_prec)~=0)...
-         ./stats.mean_prec((stats.mean_rec+stats.mean_prec)~=0)+stats.mean_rec((stats.mean_rec+stats.mean_prec)~=0);
+         ./(stats.mean_prec((stats.mean_rec+stats.mean_prec)~=0)+stats.mean_rec((stats.mean_rec+stats.mean_prec)~=0));
     
     % Check that there is no Nan in F
     if ~isempty(find(isnan(stats.mean_value), 1))
