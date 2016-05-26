@@ -80,13 +80,16 @@ if strcmp(measure, 'fb') || strcmp(measure, 'fop') || strcmp(measure, 'fr')
         stats.mean_rec   = mean(stats.rec);
     end
     
-    % Compute fb
-    stats.mean_value = zeros(size(sumP));
-    stats.mean_value((stats.mean_rec+stats.mean_prec)==0) = 0;
-    stats.mean_value((stats.mean_rec+stats.mean_prec)~=0) = ...
-        2*stats.mean_prec((stats.mean_rec+stats.mean_prec)~=0).*stats.mean_rec((stats.mean_rec+stats.mean_prec)~=0)...
-         ./(stats.mean_prec((stats.mean_rec+stats.mean_prec)~=0)+stats.mean_rec((stats.mean_rec+stats.mean_prec)~=0));
-    
+    if strcmp(measure, 'fb')
+        % Compute fb
+        stats.mean_value = zeros(size(sumP));
+        stats.mean_value((stats.mean_rec+stats.mean_prec)==0) = 0;
+        stats.mean_value((stats.mean_rec+stats.mean_prec)~=0) = ...
+            2*stats.mean_prec((stats.mean_rec+stats.mean_prec)~=0).*stats.mean_rec((stats.mean_rec+stats.mean_prec)~=0)...
+             ./(stats.mean_prec((stats.mean_rec+stats.mean_prec)~=0)+stats.mean_rec((stats.mean_rec+stats.mean_prec)~=0));
+    else
+        stats.mean_value = 2*(stats.mean_prec.*stats.mean_rec)./(stats.mean_prec+stats.mean_rec);
+    end
     % Check that there is no Nan in F
     if ~isempty(find(isnan(stats.mean_value), 1))
          error('Not a Number found');
