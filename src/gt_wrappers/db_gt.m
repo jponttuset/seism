@@ -172,6 +172,9 @@ elseif strcmp(database,'BSDS500')
     for jj=1:length(gt)
         ground_truth{jj} = uint32(gt{jj}.Segmentation);
     end
+elseif strcmp(database,'PASCALContext')
+    gt = loadvar(fullfile(db_root_dir(database), 'trainval', [image_id '.mat']),'LabelMap');
+    ground_truth = {relabel(uint32(gt))};
 else
     error(['Ground truth not implemented for: ' database]);
 end
