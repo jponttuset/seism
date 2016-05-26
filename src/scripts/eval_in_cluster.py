@@ -2,7 +2,7 @@
 
 # ----- Parameters passed to the cluster -------
 #$ -S /usr/bin/python
-#$ -l h_rt=5:59:00
+#$ -l h_rt=05:59:00
 #$ -l h_vmem=5000M
 #$ -o /scratch_net/neo/jpont/logs/
 #$ -e /scratch_net/neo/jpont/logs/
@@ -32,6 +32,7 @@
 # ------------Hard-Coded Parameters ------------
 database = 'BSDS500'
 gt_set   = 'test'
+code_folder = '/srv/glusterfs/jpont/dev/seism-dev/'
 
 # ----------------- Imports --------------------
 import os
@@ -66,9 +67,6 @@ if len(sys.argv)>5:
   	n_jobs = int(sys.argv[5])
 else:
   	n_jobs = 1
-
-# ---- Get the working folder (code folder) ----
-code_folder = '/srv/glusterfs/jpont/dev/seism-dev/'
 
 # Check that we are in the right folder
 if not os.path.isdir(code_folder + "/datasets/"):
