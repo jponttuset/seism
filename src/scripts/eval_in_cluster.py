@@ -31,7 +31,7 @@
 
 # ------------Hard-Coded Parameters ------------
 database = 'BSDS500'
-gt_set   = 'train'
+gt_set   = 'val'
 code_folder = '/srv/glusterfs/jpont/dev/seism-dev/'
 
 # ----------------- Imports --------------------
