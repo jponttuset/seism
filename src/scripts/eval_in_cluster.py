@@ -2,7 +2,7 @@
 
 # ----- Parameters passed to the cluster -------
 #$ -S /usr/bin/python
-#$ -l h_rt=05:59:00
+#$ -l h_rt=00:59:00
 #$ -l h_vmem=5000M
 #$ -o /scratch_net/neo/jpont/logs/
 #$ -e /scratch_net/neo/jpont/logs/
@@ -31,7 +31,7 @@
 
 # ------------Hard-Coded Parameters ------------
 database = 'BSDS500'
-gt_set   = 'val'
+gt_set   = 'test'
 code_folder = '/srv/glusterfs/jpont/dev/seism-dev/'
 
 # ----------------- Imports --------------------

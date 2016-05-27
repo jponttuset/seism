@@ -44,8 +44,11 @@ function measure = eval_segm( partition, ground_truth, measure, maxDist, kill_in
 if nargin<3
     measure = 'fb';
 end
-if nargin<4,
+if nargin<4
     maxDist = 0.0075;
+end
+if nargin<5
+    kill_internal = 0;
 end
 
 if (~strcmp(measure,'fb')) && kill_internal,

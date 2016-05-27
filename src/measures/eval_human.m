@@ -72,5 +72,6 @@ else
     for ii=1:length(im_ids)
         im_res(ii,:) = mean(all_res(idx==ii,:));
     end 
+    mean_meas = mean(im_res(:,[3,2]));
 end
 

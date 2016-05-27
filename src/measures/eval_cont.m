@@ -21,6 +21,13 @@
 % ------------------------------------------------------------------------ 
 function measure = eval_cont( contours, ground_truth, maxDist, kill_internal )
 
+if nargin<3
+    maxDist = 0.0075;
+end
+if nargin<4
+    kill_internal = 0;
+end
+
 % If a single ground_truth, convert it to cell
 if ~iscell(ground_truth)
     ground_truth = {ground_truth};
