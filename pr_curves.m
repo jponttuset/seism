@@ -41,17 +41,18 @@
 
 %% Experiments parameters
 % BSDS500 set: train, test, val, trainval, or all
+% database = 'Pascal';
+% gt_set   = 'Segmentation_val_2012';
 database = 'BSDS500';
 gt_set   = 'test';
 
 % Precision-recall measures
-measures = {'fb' ,... % Precision-recall for boundaries
+measures = {'fb' ... % Precision-recall for boundaries
             'fop',... % Precision-recall for objects and parts  
             };
               
 % Define all methods to be compared
 methods  = [];
-methods(end+1).name = 'HED'     ; methods(end).io_func = @read_one_cont_png;
 methods(end+1).name = 'LEP'     ; methods(end).io_func = @read_one_lep;
 methods(end+1).name = 'MCG'     ; methods(end).io_func = @read_one_ucm;
 methods(end+1).name = 'gPb-UCM' ; methods(end).io_func = @read_one_ucm;
@@ -64,7 +65,7 @@ methods(end+1).name = 'NCut'    ; methods(end).io_func = @read_one_prl;
 methods(end+1).name = 'QuadTree'; methods(end).io_func = @read_one_prl;
 
 % Which of these are only contours?
-which_contours = {'HED'};
+which_contours = {''};
 
 % Colors to display    
 colors = {'k','g','b','r','m','c','y','r','k','g','b'};
@@ -91,12 +92,17 @@ for kk=1:length(measures)
     fig_handlers = [];
     legends = {};
     
-%     % Plot human
-%     human_same = gather_human(measures{kk}, 'same', database, gt_set, 'human_perf');
-%     human_diff = gather_human(measures{kk}, 'diff', database, gt_set, 'human_perf');
-%     fig_handlers(end+1) = plot(human_same.mean_rec,human_same.mean_prec, 'rd'); %#ok<SAGROW>
-%     plot(human_diff.mean_rec,human_diff.mean_prec, 'rd');
-%     legends{end+1} = 'Human'; %#ok<SAGROW>
+    % Plot human (uncomment to recompute)
+    if strcmp(database,'BSDS500')
+        % mean_meas = eval_human(measures{kk},database, gt_set);
+        if strcmp(measures{kk},'fb')
+            mean_meas = [0.7235 0.9014];
+        else
+            mean_meas = [0.4739 0.6724];
+        end
+        fig_handlers(end+1) = plot(mean_meas(1),mean_meas(2), 'rd'); %#ok<SAGROW>
+        legends{end+1} = 'Human'; %#ok<SAGROW>
+    end
     
     % Plot methods
     for ii=1:length(methods)
