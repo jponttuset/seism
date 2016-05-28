@@ -3,8 +3,7 @@ function [mean_meas, all_res] = eval_human(measure,database, gt_set)
 im_ids = db_ids(database, gt_set);
 all_res = [];
 for ii=1:length(im_ids)
-    disp(num2str(ii))
-    
+    disp(['Evaluating human performance on image: ' num2str(ii) '/' num2str(length(im_ids))]);
     % Read GT
     gt = db_gt(database,im_ids{ii});
     
