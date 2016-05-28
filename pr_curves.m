@@ -43,8 +43,8 @@
 %clear all;close all;clc;
 
 
-%database = 'BSDS500';
-database = 'PASCALContext';
+database = 'BSDS500';
+%database = 'PASCALContext';
 %database = 'Pascal';
 %database = 'SBD';
 
@@ -153,7 +153,7 @@ for kk=1:length(measures)
         display(['Evaluating method: ' methods(ii).name '...']);
         % Plot the contours only in 'fb'
         if strcmp(measures{kk},'fb') || strcmp(methods(ii).type,'segmentation')
-            if strcmp(methods(ii).type,'contour'),style='-';else style='-';end
+            if strcmp(methods(ii).type,'contour'),style='-.';else style='-';end
             
             % Get all parameters for that method from file
             params = get_method_parameters(methods(ii).name);
