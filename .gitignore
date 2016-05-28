@@ -2,3 +2,5 @@ datasets
 *Kevis.m
 eval_in_cluster_BSDS.py
 eval_in_cluster_SegVOC12.py
+results/BSDS500/ResNet*
+parameters/ResNet*
