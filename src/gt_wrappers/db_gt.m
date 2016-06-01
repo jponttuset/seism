@@ -11,7 +11,7 @@
 %    International Conference on Computer Vision (ICCV) 2015.
 % Please consider citing the paper if you use this code.
 % ------------------------------------------------------------------------
-function [ground_truth, gt_set, im, anns] = db_gt( database, image_id, ptype, cat_ids )
+function [ground_truth, gt_set, im, anns, matches_lookup] = db_gt( database, image_id, ptype, cat_ids )
 
 if nargin<3,
     ptype = 'inst'; % Instance partitions by default, 'cls' for class.
@@ -28,40 +28,56 @@ end
 
 if strcmp(database,'Pascal')
     % Load Object and Class ground truth
-    gt_class  = imread(fullfile(db_root_dir(database), 'SegmentationClass', [image_id '.png']));
-    gt = zeros(size(gt_class));
+    gt_cls  = imread(fullfile(db_root_dir(database), 'SegmentationClass', [image_id '.png']));
+    gt = zeros(size(gt_cls));
     if strcmp(ptype,'cls'),
         for i=1:length(cat_ids),
-            gt(gt_class==cat_ids(i)) = cat_ids(i);
+            gt(gt_cls==cat_ids(i)) = cat_ids(i);
         end
     elseif strcmp(ptype,'inst'),
-        gt_object = imread(fullfile(db_root_dir(database), 'SegmentationObject', [image_id '.png']));
-        obj_ids   = unique(gt_object);
+        gt_inst = imread(fullfile(db_root_dir(database), 'SegmentationObject', [image_id '.png']));
+        obj_ids   = unique(gt_inst);
         obj_ids(obj_ids==0) = [];
         obj_ids(obj_ids==255) = [];
         for ii=1:length(obj_ids)
-            mask   = (gt_object==obj_ids(ii));
-            category = gt_class(find(mask==1,1,'first'));
+            mask   = (gt_inst==obj_ids(ii));
+            category = gt_cls(find(mask==1,1,'first'));
             if ismember(category,cat_ids),
-                gt(gt_object==obj_ids(ii))=ii;
+                gt(gt_inst==obj_ids(ii))=ii;
             end
         end
     end
     ground_truth = {relabel(uint32(gt))};
     
 elseif strcmp(database,'SBD')
-    % Load ground truth
-    gt = loadvar(fullfile(db_root_dir(database), 'inst', [image_id '.mat']),'GTinst');
-    n_objs = length(gt.Boundaries);
-    for ii=1:n_objs
-        ground_truth.masks{ii}    = (gt.Segmentation==ii);
-        ground_truth.category(ii) = gt.Categories(ii);
-        ground_truth.obj_id(ii)   = ii;
-        ground_truth.im_id{ii}    = image_id;
-    end
+    gt_cls = loadvar(fullfile(db_root_dir(database), 'cls', [image_id '.mat']),'GTcls');
+    gt = zeros(size(gt_cls.Segmentation));
     
-    % Valid pixels
-    ground_truth.valid_pixels = (gt.Segmentation<255);
+    if strcmp(ptype,'inst'),
+        gt_inst= loadvar(fullfile(db_root_dir(database), 'inst', [image_id '.mat']),'GTinst');
+        obj_num = length(gt_inst.Boundaries);
+        for ii=1:obj_num
+            mask   = (gt_inst.Segmentation==ii);
+            category = gt_cls.Segmentation(find(mask==1,1,'first'));
+            if ismember(category,cat_ids),
+                gt(gt_inst.Segmentation==ii)=ii;
+            end
+        end
+    elseif strcmp(ptype, 'cls'),
+        for i=1:length(cat_ids),
+            gt(gt_cls.Segmentation==cat_ids(i)) = cat_ids(i);
+        end
+    else
+        error('Something went wrong. Check curr_eval.');
+    end
+    gt = relabel(gt);
+    for ii=1:length(unique(gt)),
+        mask   = (gt==ii);
+        category = gt_cls.Segmentation(find(mask==1,1,'first'));
+        matches_lookup(ii,1:2) = [ii, category]; % Store Segment - Category labels
+    end
+    ground_truth = {gt};
+    gt_set=[]; im=[]; anns=[];
 elseif strcmp(database,'COCO')
     
     % Look for the image in the subfodlers to get gt_set
@@ -132,13 +148,13 @@ elseif strcmp(database,'COCO')
 elseif strcmp(database,'bsds_object_gt')
     
     % Load file
-    gt_object = loadvar(fullfile(db_root_dir(database), 'groundTruth', [image_id '_gt.mat']),'objmask');
+    gt_inst = loadvar(fullfile(db_root_dir(database), 'groundTruth', [image_id '_gt.mat']),'objmask');
     
     % Transform ground truth into separate masks
-    obj_ids   = unique(gt_object);
+    obj_ids   = unique(gt_inst);
     obj_ids(obj_ids==0) = [];
     for ii=1:length(obj_ids)
-        ground_truth.masks{ii} = (gt_object==obj_ids(ii));
+        ground_truth.masks{ii} = (gt_inst==obj_ids(ii));
         ground_truth.category(ii) = 1;
         ground_truth.obj_id(ii)   = ii;
         ground_truth.im_id{ii}    = image_id;
@@ -154,7 +170,7 @@ elseif strcmp(database,'bsds_object_gt')
     end
     
     % Valid pixels (to make it compatible with SBD and Pascal)
-    ground_truth.valid_pixels = (gt_object<255);
+    ground_truth.valid_pixels = (gt_inst<255);
 elseif strcmp(database,'BSDS500')
     % Look for the file
     if exist(fullfile(db_root_dir(database), 'data', 'groundTruth', 'train', [image_id '.mat']),'file')
