@@ -18,12 +18,18 @@ if ~exist('segm_or_contour','var')
     segm_or_contour = 0;
 end
 
+% I/O folders
+method_dir = fullfile(seism_root,'datasets',database,method);
+res_dir    = fullfile(seism_root,'results' ,database,method);
+
 kill_internal = 0;
 if strcmp(database,'Pascal'),
     maxDist = 0.01;
 elseif strcmp(database,'SBD'),
     maxDist = 0.02;
     kill_internal = 1;
+    method_dir = fullfile(seism_root,'datasets',database,method,num2str(cat_ids));
+    res_dir    = fullfile(seism_root,'results' ,database,method,num2str(cat_ids));
 else
     maxDist = 0.0075;
 end
@@ -31,9 +37,7 @@ end
 % Load indices
 im_ids = db_ids(database, gt_set);
 
-% I/O folders
-method_dir = fullfile(seism_root,'datasets',database,method);
-res_dir    = fullfile(seism_root,'results' ,database,method);
+
 if ~exist(res_dir,'dir')
     mkdir(res_dir)
 end

@@ -1,4 +1,4 @@
-function pr_curves_to_file(measures, database, gt_set, methods, out_dir)
+function pr_curves_to_file(measures, database, gt_set, methods, cat_id, out_dir)
 
 if ~exist('measures','var'),
     measures = {'fb' ,... % Precision-recall for boundaries
@@ -29,7 +29,7 @@ end
 if ~exist(out_dir,'dir'),
     mkdir(out_dir);
 end
-
+metafix = '';
 
 %% Write evertyhing to file
 for kk=1:length(measures)
@@ -40,36 +40,41 @@ for kk=1:length(measures)
         params = get_method_parameters(methods(ii).name);
         
         % Gather pre-computed results
-        curr_meas = gather_measure(methods(ii).name,params,measures{kk},database,gt_set);
+        if strcmp(database, 'SBD'),
+            curr_meas = gather_measure(methods(ii).name,params,measures{kk},database,gt_set,num2str(cat_id));
+            metafix = ['_' num2str(cat_id)];
+        else
+            curr_meas = gather_measure(methods(ii).name,params,measures{kk},database,gt_set);
+        end
         curr_ods = general_ods(curr_meas);
         curr_ois = general_ois(curr_meas);
         curr_ap = general_ap(curr_meas);
         
         % Write PR curves
-        fid = fopen(fullfile(out_dir, [database '_' gt_set '_' measures{kk} '_' methods(ii).name '.txt']),'w');
+        fid = fopen(fullfile(out_dir, [database '_' gt_set '_' measures{kk} '_' methods(ii).name metafix '.txt']),'w');
         fprintf(fid,'Precision\tRecall\n');
         fclose(fid);
-        dlmwrite(fullfile(out_dir, [database '_' gt_set '_' measures{kk} '_' methods(ii).name '.txt']),...
+        dlmwrite(fullfile(out_dir, [database '_' gt_set '_' measures{kk} '_' methods(ii).name metafix '.txt']),...
             [curr_meas.mean_prec',curr_meas.mean_rec'],'-append','delimiter','\t','precision',4)
         
         % Write ODS PR
-        fid = fopen(fullfile(out_dir, [database '_' gt_set '_' measures{kk} '_' methods(ii).name '_ods.txt']),'w');
+        fid = fopen(fullfile(out_dir, [database '_' gt_set '_' measures{kk} '_' methods(ii).name metafix '_ods.txt']),'w');
         fprintf(fid,'Precision\tRecall\n');
         fprintf(fid,'%f\t%f\n',curr_ods.mean_prec,curr_ods.mean_rec);
         fclose(fid);
         
         % Write ODS F
-        fid = fopen(fullfile(out_dir, [database '_' gt_set '_' measures{kk} '_' methods(ii).name '_ods_f.txt']),'w');
+        fid = fopen(fullfile(out_dir, [database '_' gt_set '_' measures{kk} '_' methods(ii).name metafix '_ods_f.txt']),'w');
         fprintf(fid,'%.3f',2*curr_ods.mean_prec*curr_ods.mean_rec/(curr_ods.mean_prec+curr_ods.mean_rec));
         fclose(fid);
         
         % Write OIS F
-        fid = fopen(fullfile(out_dir,[database '_' gt_set '_' measures{kk} '_' methods(ii).name '_ois_f.txt']),'w');
+        fid = fopen(fullfile(out_dir,[database '_' gt_set '_' measures{kk} '_' methods(ii).name metafix '_ois_f.txt']),'w');
         fprintf(fid,'%.3f\n',curr_ois.mean_value);
         fclose(fid);
         
         % Write AP
-        fid = fopen(fullfile(out_dir,[database '_' gt_set '_' measures{kk} '_' methods(ii).name '_ap.txt']),'w');
+        fid = fopen(fullfile(out_dir,[database '_' gt_set '_' measures{kk} '_' methods(ii).name metafix '_ap.txt']),'w');
         fprintf(fid,'%.3f\n',curr_ap);
         fclose(fid);
     end
