@@ -23,7 +23,6 @@ end
 if ~exist('cat_id','var')
    cat_ids = 0;
 end
-
 %% Get all parameters for that method from file
 params = get_method_parameters(method);
 

@@ -79,12 +79,14 @@ elif database == 'Pascal':
 	gt_set = 'Segmentation_val_2012'
 elif database == 'SBD':
 	gt_set = 'val'
-	cat_ids='15'
+	if len(sys.argv)>7:
+		cat_id = sys.argv[7]
+	else:
+		cat_id='15'
 else:
 	print "ERROR: Unknown database"
 	exit(1)
     
-
 # Check that we are in the right folder
 if not os.path.isdir(code_folder + "/datasets/"):
 	print "ERROR: datasets folder not found, are you in the code folder of SEISM?"
@@ -144,8 +146,8 @@ for ii in range(id_start-1,id_end):
             run = 0;
 
     if run==1:
-		if 'cat_ids' in globals():
-			command_to_run = "/usr/sepp/bin/matlab -nodesktop -nodisplay -nosplash -r \"install;eval_method('"+method+"','"+all_params[ii]+"','"+measure+"',@"+io_func+",'"+database+"','"+gt_set+"',"+str(n_ims)+","+contour+","+cat_ids+");exit\""
+		if 'cat_id' in globals():
+			command_to_run = "/usr/sepp/bin/matlab -nodesktop -nodisplay -nosplash -r \"install;eval_method('"+method+"','"+all_params[ii]+"','"+measure+"',@"+io_func+",'"+database+"','"+gt_set+"',"+str(n_ims)+","+contour+","+cat_id+");exit\""
 		else:
 			command_to_run = "/usr/sepp/bin/matlab -nodesktop -nodisplay -nosplash -r \"install;eval_method('"+method+"','"+all_params[ii]+"','"+measure+"',@"+io_func+",'"+database+"','"+gt_set+"',"+str(n_ims)+","+contour+");exit\""
 			
