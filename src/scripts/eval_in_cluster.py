@@ -32,9 +32,8 @@
 # qsub -N evalFop -t 1-20 eval_in_cluster.py NCut    BSDS500       read_one_prl      fop 0 20
 
 # ------------Hard-Coded Parameters ------------
-gt_set   = 'test'
 #code_folder = '/srv/glusterfs/jpont/dev/seism-dev/'
-code_folder = '/scratch_net/reinhold/Kevis/Software/seism/'
+code_folder = '/scratch_net/reinhold/Kevis/Software/seism'
 
 # ----------------- Imports --------------------
 import os

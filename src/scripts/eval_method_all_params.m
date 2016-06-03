@@ -20,7 +20,7 @@ function eval_method_all_params(method, measure, read_part_fun, database, gt_set
 if ~exist('segm_or_contour','var')
     segm_or_contour = 0;
 end
-if ~exist('cat_id','var')
+if ~exist('cat_ids','var')
    cat_ids = 0;
 end
 %% Get all parameters for that method from file
