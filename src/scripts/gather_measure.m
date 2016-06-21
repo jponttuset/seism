@@ -1,4 +1,4 @@
-function stats = gather_measure(method, params, measure, database, gt_set)
+function stats = gather_measure(method, params, measure, database, gt_set, cat_id)
 % stats = gather_measure(method, params, measure, gt_set)
 % ------------------------------------------------------------------------ 
 %  Copyright (C)
@@ -9,7 +9,11 @@ function stats = gather_measure(method, params, measure, database, gt_set)
 % ------------------------------------------------------------------------ 
 
 % Directory where results are stored
-results_dir = fullfile(seism_root, 'results', database, method);
+if nargin<6,
+    results_dir = fullfile(seism_root, 'results', database, method);
+else
+    results_dir = fullfile(seism_root, 'results', database, method,num2str(cat_id));
+end
   
 % Set of images considered according to gt_set ('test', 'val', 'train')
 image_idxs = db_ids(database,gt_set);

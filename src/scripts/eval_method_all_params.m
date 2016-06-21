@@ -14,16 +14,15 @@
 %  Jordi Pont-Tuset <jordi.pont@upc.edu>
 %  March 2011
 % ------------------------------------------------------------------------ 
-function eval_method_all_params(method, measure, read_part_fun, database, gt_set, segm_or_contour,cat_id)
+function eval_method_all_params(method, measure, read_part_fun, database, gt_set, segm_or_contour,cat_ids)
 
 % Is it a partition or a contour detection?
 if ~exist('segm_or_contour','var')
     segm_or_contour = 0;
 end
-if ~exist('cat_id','var')
-   cat_id = 0;
+if ~exist('cat_ids','var')
+   cat_ids = 0;
 end
-
 %% Get all parameters for that method from file
 params = get_method_parameters(method);
 
@@ -53,7 +52,7 @@ for nn=1:length(experiments)
     eval_method(experiments(nn).method,...
                 experiments(nn).parameter,...
                 experiments(nn).measure,...
-                read_part_fun, database, gt_set, length(params), segm_or_contour,cat_id);
+                read_part_fun, database, gt_set, length(params), segm_or_contour,cat_ids);
 end
 
 

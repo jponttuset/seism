@@ -39,7 +39,7 @@
 %    Computer Vision and Pattern Recognition (CVPR), 2013.
 %  If you use this code, please consider citing the paper.
 % ------------------------------------------------------------------------
-function measure = eval_segm( partition, ground_truth, measure, maxDist, kill_internal )
+function measure = eval_segm( partition, ground_truth, measure, maxDist, kill_internal, lkup )
 
 if nargin<3
     measure = 'fb';
@@ -49,6 +49,9 @@ if nargin<4
 end
 if nargin<5
     kill_internal = 0;
+end
+if nargin<6
+    lkup = [];
 end
 
 if (~strcmp(measure,'fb')) && kill_internal,
@@ -81,10 +84,16 @@ end
 if strcmp(measure,'fb')
     contours = seg2bmap(partition);
     if kill_internal,
-        for ii=1 : length(unique(ground_truth{1}))-1,
-            mask = (ground_truth{1}==ii);
-            gt_bdry = seg2bmap(mask);
-            contours = kill_internal_bdries(contours, gt_bdry, mask, maxDist);
+        if isempty(lkup),
+            error('Look Up table for classes/instances not provided');
+        else
+            for ii=1 : length(unique(ground_truth{1}))-1,
+                if lkup(ii,2)>0,
+                    mask = (ground_truth{1}==ii);
+                    gt_bdry = seg2bmap(mask);
+                    contours = kill_internal_bdries(contours, gt_bdry, mask, maxDist);
+                end
+            end
         end
     end
     

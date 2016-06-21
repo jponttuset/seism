@@ -161,7 +161,11 @@ for kk=1:length(measures)
             params = get_method_parameters(methods(ii).name);
             
             % Gather pre-computed results
-            curr_meas = gather_measure(methods(ii).name,params,measures{kk},database,gt_set);
+            if strcmp(database,'SBD'),
+                curr_meas = gather_measure(methods(ii).name,params,measures{kk},database,gt_set,cat_id);
+            else
+                curr_meas = gather_measure(methods(ii).name,params,measures{kk},database,gt_set);
+            end
             curr_ods  = general_ods(curr_meas);
             curr_ois  = general_ois(curr_meas);
             curr_ap   = general_ap(curr_meas);
@@ -181,6 +185,10 @@ end
 
 %Write the results for LaTeX processing
 if writePR,
-    pr_curves_to_file(measures, database, gt_set, methods)
+    if strcmp(database,'SBD'),
+        pr_curves_to_file(measures, database, gt_set, methods, cat_id);
+    else
+        pr_curves_to_file(measures, database, gt_set, methods);
+    end
 end
 

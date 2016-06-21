@@ -2,37 +2,38 @@
 
 # ----- Parameters passed to the cluster -------
 #$ -S /usr/bin/python
-#$ -l h_rt=00:59:00
+#$ -l h_rt=05:59:00
 #$ -l h_vmem=5000M
-#$ -o /scratch_net/neo/jpont/logs/
-#$ -e /scratch_net/neo/jpont/logs/
+#$ -o /scratch_net/reinhold/Kevis/logs/
+#$ -e /scratch_net/reinhold/Kevis/logs/
 #$ -j y
 
 # ------------- Examples of usage --------------
-# qsub -N evalFb -t 1-100 eval_in_cluster.py HED     read_one_cont_png fb 1 100
-# qsub -N evalFb -t 1-100 eval_in_cluster.py LEP     read_one_lep      fb 0 100
-# qsub -N evalFb -t 1-100 eval_in_cluster.py MCG     read_one_ucm      fb 0 100
-# qsub -N evalFb -t 1-100 eval_in_cluster.py ISCRA   read_one_ucm      fb 0 100
-# qsub -N evalFb -t 1-100 eval_in_cluster.py gPb-UCM read_one_ucm      fb 0 100
-# qsub -N evalFb -t 1-100 eval_in_cluster.py NWMC    read_one_ucm      fb 0 100
-# qsub -N evalFb -t 1-100 eval_in_cluster.py IIDKL   read_one_ucm      fb 0 100
-# qsub -N evalFb -t 1-100 eval_in_cluster.py EGB     read_one_prl      fb 0 100
-# qsub -N evalFb -t 1-100 eval_in_cluster.py MShift  read_one_prl      fb 0 100
-# qsub -N evalFb -t 1-100 eval_in_cluster.py NCut    read_one_prl      fb 0 100
+# qsub -N evalFb -t 1-100 eval_in_cluster.py COB     PASCALContext read_one_ucm      fb 0 100
+# qsub -N evalFb -t 1-100 eval_in_cluster.py HED     BSDS500       read_one_cont_png fb 1 100
+# qsub -N evalFb -t 1-100 eval_in_cluster.py LEP     BSDS500       read_one_lep      fb 0 100
+# qsub -N evalFb -t 1-100 eval_in_cluster.py MCG     BSDS500       read_one_ucm      fb 0 100
+# qsub -N evalFb -t 1-100 eval_in_cluster.py ISCRA   BSDS500       read_one_ucm      fb 0 100
+# qsub -N evalFb -t 1-100 eval_in_cluster.py gPb-UCM BSDS500       read_one_ucm      fb 0 100
+# qsub -N evalFb -t 1-100 eval_in_cluster.py NWMC    BSDS500       read_one_ucm      fb 0 100
+# qsub -N evalFb -t 1-100 eval_in_cluster.py IIDKL   BSDS500       read_one_ucm      fb 0 100
+# qsub -N evalFb -t 1-100 eval_in_cluster.py EGB     BSDS500       read_one_prl      fb 0 100
+# qsub -N evalFb -t 1-100 eval_in_cluster.py MShift  BSDS500       read_one_prl      fb 0 100
+# qsub -N evalFb -t 1-100 eval_in_cluster.py NCut    BSDS500       read_one_prl      fb 0 100
 
-# qsub -N evalFop -t 1-20 eval_in_cluster.py LEP     read_one_lep      fop 0 20
-# qsub -N evalFop -t 1-20 eval_in_cluster.py MCG     read_one_ucm      fop 0 20
-# qsub -N evalFop -t 1-20 eval_in_cluster.py gPb-UCM read_one_ucm      fop 0 20
-# qsub -N evalFop -t 1-20 eval_in_cluster.py NWMC    read_one_ucm      fop 0 20
-# qsub -N evalFop -t 1-20 eval_in_cluster.py IIDKL   read_one_ucm      fop 0 20
-# qsub -N evalFop -t 1-20 eval_in_cluster.py EGB     read_one_prl      fop 0 20
-# qsub -N evalFop -t 1-20 eval_in_cluster.py MShift  read_one_prl      fop 0 20
-# qsub -N evalFop -t 1-20 eval_in_cluster.py NCut    read_one_prl      fop 0 20
+# qsub -N evalFb -t 1-100 eval_in_cluster.py COB     PASCALContext read_one_ucm      fop 0 100
+# qsub -N evalFop -t 1-20 eval_in_cluster.py LEP     BSDS500       read_one_lep      fop 0 20
+# qsub -N evalFop -t 1-20 eval_in_cluster.py MCG     BSDS500       read_one_ucm      fop 0 20
+# qsub -N evalFop -t 1-20 eval_in_cluster.py gPb-UCM BSDS500       read_one_ucm      fop 0 20
+# qsub -N evalFop -t 1-20 eval_in_cluster.py NWMC    BSDS500       read_one_ucm      fop 0 20
+# qsub -N evalFop -t 1-20 eval_in_cluster.py IIDKL   BSDS500       read_one_ucm      fop 0 20
+# qsub -N evalFop -t 1-20 eval_in_cluster.py EGB     BSDS500       read_one_prl      fop 0 20
+# qsub -N evalFop -t 1-20 eval_in_cluster.py MShift  BSDS500       read_one_prl      fop 0 20
+# qsub -N evalFop -t 1-20 eval_in_cluster.py NCut    BSDS500       read_one_prl      fop 0 20
 
 # ------------Hard-Coded Parameters ------------
-database = 'BSDS500'
-gt_set   = 'test'
-code_folder = '/srv/glusterfs/jpont/dev/seism-dev/'
+#code_folder = '/srv/glusterfs/jpont/dev/seism-dev/'
+code_folder = '/scratch_net/reinhold/Kevis/Software/seism'
 
 # ----------------- Imports --------------------
 import os
@@ -54,20 +55,38 @@ def file_subpart(fname,id_start,id_end):
 
 
 # ------------- Get the parameters -------------
-if len(sys.argv)<5:
+if len(sys.argv)<6:
 	print "ERROR: Not enough input parameters"
   	exit(1)
 else:
   	method = sys.argv[1] # Name of the folder containing the partitions or contours
-  	io_func = sys.argv[2] # I/O function
-  	measure = sys.argv[3] # fb or fop
-  	contour  = sys.argv[4] # Contour or segmentation
+	database = sys.argv[2] # Name of the database: {BSDS500, PASCALContext, Pascal, SBD,..}
+  	io_func = sys.argv[3] # I/O function
+  	measure = sys.argv[4] # fb or fop
+  	contour  = sys.argv[5] # Contour or segmentation
 
-if len(sys.argv)>5:
-  	n_jobs = int(sys.argv[5])
+if len(sys.argv)>6:
+  	n_jobs = int(sys.argv[6])
 else:
   	n_jobs = 1
 
+if database=='BSDS500':
+	gt_set = 'test'
+elif database == 'PASCALContext':
+	gt_set = 'test_new'
+elif database == 'Pascal':
+	gt_set = 'Segmentation_val_2012'
+elif database == 'SBD':
+	gt_set = 'val'
+	if len(sys.argv)>7:
+		cat_id = sys.argv[7]
+	else:
+		print 'category id not defined: Evaluating default category Person'
+		cat_id='15'
+else:
+	print "ERROR: Unknown database"
+	exit(1)
+    
 # Check that we are in the right folder
 if not os.path.isdir(code_folder + "/datasets/"):
 	print "ERROR: datasets folder not found, are you in the code folder of SEISM?"
@@ -127,7 +146,13 @@ for ii in range(id_start-1,id_end):
             run = 0;
 
     if run==1:
-        command_to_run = "/usr/sepp/bin/matlab -nodesktop -nodisplay -nosplash -r \"install;eval_method('"+method+"','"+all_params[ii]+"','"+measure+"',@"+io_func+",'"+database+"','"+gt_set+"',"+str(n_ims)+","+contour+");exit\""
-        #print command_to_run
-        os.system(command_to_run)
+		if 'cat_id' in globals():
+			command_to_run = "/usr/sepp/bin/matlab -nodesktop -nodisplay -nosplash -r \"install;eval_method('"+method+"','"+all_params[ii]+"','"+measure+"',@"+io_func+",'"+database+"','"+gt_set+"',"+str(n_ims)+","+contour+","+cat_id+");exit\""
+		else:
+			command_to_run = "/usr/sepp/bin/matlab -nodesktop -nodisplay -nosplash -r \"install;eval_method('"+method+"','"+all_params[ii]+"','"+measure+"',@"+io_func+",'"+database+"','"+gt_set+"',"+str(n_ims)+","+contour+");exit\""
+			
+		#print command_to_run
+		os.system(command_to_run)
+
+
 
