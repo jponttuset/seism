@@ -48,7 +48,7 @@
 database = 'Pascal';
 %database = 'SBD';
 
-writePR = 1; % Write results in format to use latex code?
+writePR = 0; % Write results in format to use latex code?
 USEprecomputed = 1; % Use precomputed results or evaluate on your computer?
 
 % Precision-recall measures
@@ -103,7 +103,9 @@ switch database,
         gt_set   = 'Segmentation_val_2012';
         
         methods(end+1).name = 'COB';              methods(end).io_func = @read_one_ucm;      methods(end).legend = methods(end).name;  methods(end).type = 'segmentation';
-        methods(end+1).name = 'HED';              methods(end).io_func = @read_one_cont_png; methods(end).legend = methods(end).name;  methods(end).type = 'contour'; %From Khoreva et al.
+        methods(end+1).name = 'ResNet50';         methods(end).io_func = @read_one_cont_png; methods(end).legend = methods(end).name;  methods(end).type = 'contour';
+        methods(end+1).name = 'CEDN';             methods(end).io_func = @read_one_cont_png; methods(end).legend = methods(end).name;  methods(end).type = 'contour'; %From Jimei Yang et al. [CVPR16]
+        methods(end+1).name = 'HED';              methods(end).io_func = @read_one_cont_png; methods(end).legend = methods(end).name;  methods(end).type = 'contour'; %From Khoreva et al. [CVPR16]
         methods(end+1).name = 'HED-BSDS500';      methods(end).io_func = @read_one_cont_png; methods(end).legend = methods(end).name;  methods(end).type = 'contour';
         methods(end+1).name = 'LEP-BSDS500';      methods(end).io_func = @read_one_lep;      methods(end).legend = methods(end).name;  methods(end).type = 'segmentation';
         methods(end+1).name = 'MCG-BSDS500';      methods(end).io_func = @read_one_ucm;      methods(end).legend = methods(end).name;  methods(end).type = 'segmentation';

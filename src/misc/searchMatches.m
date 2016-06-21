@@ -5,10 +5,13 @@ set2_names = db_ids(db2, set2);
 
 [matches, numMatches] = matchSets(set1_names,set2_names);
 
+display([num2str(length(set1_names)) ' images in ' db1 ' ' set1]);
+display([num2str(length(set2_names)) ' images in ' db2 ' ' set2]);
+
 if numMatches==0,
     display('Sets do not overlap!');
 else
-    display(['there are ' num2str(numMatches) ' matches between ' db1 ' ' set1 ' and ' db2 ' ' set2 '!!']);
+    display([num2str(numMatches) ' matches between ' db1 ' ' set1 ' and ' db2 ' ' set2 '!!']);
 end
 
 

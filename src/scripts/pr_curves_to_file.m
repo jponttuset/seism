@@ -39,10 +39,13 @@ for kk=1:length(measures)
         % Get all parameters for that method from file
         params = get_method_parameters(methods(ii).name);
         
+        if strcmp(database,'SBD'),
+            metafix = ['_' num2str(cat_id)];
+        end
+        if exist(fullfile(out_dir, [database '_' gt_set '_' measures{kk} '_' methods(ii).name metafix '.txt']),'file'), continue;end
         % Gather pre-computed results
         if strcmp(database, 'SBD'),
             curr_meas = gather_measure(methods(ii).name,params,measures{kk},database,gt_set,num2str(cat_id));
-            metafix = ['_' num2str(cat_id)];
         else
             curr_meas = gather_measure(methods(ii).name,params,measures{kk},database,gt_set);
         end
@@ -68,10 +71,12 @@ for kk=1:length(measures)
         fprintf(fid,'%.3f',2*curr_ods.mean_prec*curr_ods.mean_rec/(curr_ods.mean_prec+curr_ods.mean_rec));
         fclose(fid);
         
-        % Write OIS F
-        fid = fopen(fullfile(out_dir,[database '_' gt_set '_' measures{kk} '_' methods(ii).name metafix '_ois_f.txt']),'w');
-        fprintf(fid,'%.3f\n',curr_ois.mean_value);
-        fclose(fid);
+        if ~strcmp(database,'SBD'),
+            % Write OIS F
+            fid = fopen(fullfile(out_dir,[database '_' gt_set '_' measures{kk} '_' methods(ii).name metafix '_ois_f.txt']),'w');
+            fprintf(fid,'%.3f\n',curr_ois.mean_value);
+            fclose(fid);
+        end
         
         % Write AP
         fid = fopen(fullfile(out_dir,[database '_' gt_set '_' measures{kk} '_' methods(ii).name metafix '_ap.txt']),'w');

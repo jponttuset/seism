@@ -7,7 +7,7 @@
 %database = 'Pascal';
 database = 'SBD';
 
-writePR = 0; % Write results in format to use latex code?
+writePR = 1; % Write results in format to use latex code?
 USEprecomputed = 1; % Use precomputed results or evaluate on your computer?
 
 % Precision-recall measures
@@ -21,7 +21,17 @@ switch database,
         cat_id = 1:20;
         classes = importdata(fullfile(seism_root,'src','gt_wrappers','misc','SBD_classes.txt'));
         
-        methods(end+1).name = 'ResNet50-mod-pc_50000';             methods(end).io_func = @read_one_cont_png;  methods(end).legend = methods(end).name;  methods(end).type = 'contour';
+                 methods(end+1).name = 'ResNet50-mod-pc_40000';             methods(end).io_func = @read_one_cont_png;  methods(end).legend = 'ResNet50';  methods(end).type = 'contour';
+                 methods(end+1).name = 'ResNet50-mod-pc_40000_clean';             methods(end).io_func = @read_one_cont_png;  methods(end).legend = 'ResNet50 clean';  methods(end).type = 'contour';
+                 methods(end+1).name = 'HFL';             methods(end).io_func = @read_one_cont_png;  methods(end).legend = methods(end).name;  methods(end).type = 'contour';
+        %         methods(end+1).name = 'HED-mod-pc_40000';             methods(end).io_func = @read_one_cont_png;  methods(end).legend = methods(end).name;  methods(end).type = 'contour';
+        %         methods(end+1).name = 'ResNet50-neg_50_40000';             methods(end).io_func = @read_one_cont_png;  methods(end).legend = methods(end).name;  methods(end).type = 'contour';
+        %         methods(end+1).name = 'ResNet50-neg_100_40000';             methods(end).io_func = @read_one_cont_png;  methods(end).legend = methods(end).name;  methods(end).type = 'contour';
+        %         methods(end+1).name = 'ResNet50-neg_200_40000';             methods(end).io_func = @read_one_cont_png;  methods(end).legend = methods(end).name;  methods(end).type = 'contour';
+        %         methods(end+1).name = 'ResNet50-neg_500_40000';             methods(end).io_func = @read_one_cont_png;  methods(end).legend = methods(end).name;  methods(end).type = 'contour';
+        %         methods(end+1).name = 'ResNet50-neg_1000_40000';             methods(end).io_func = @read_one_cont_png;  methods(end).legend = methods(end).name;  methods(end).type = 'contour';
+        %         methods(end+1).name = 'ResNet50-neg_all_40000';             methods(end).io_func = @read_one_cont_png;  methods(end).legend = methods(end).name;  methods(end).type = 'contour';
+        methods(end+1).name = 'Khoreva';             methods(end).io_func = @read_one_cont_png;  methods(end).legend = methods(end).name;  methods(end).type = 'contour';
         methods(end+1).name = 'Bharath';             methods(end).io_func = @read_one_cont_png;  methods(end).legend = methods(end).name;  methods(end).type = 'contour';
         %methods(end+1).name = 'COB';             methods(end).io_func = @read_one_ucm;       methods(end).legend = 'COB';              methods(end).type = 'segmentation';
     otherwise,
@@ -56,8 +66,9 @@ end
 %% Plot PR curves
 addpath(genpath('src'));
 figure('units','normalized','outerposition',[0 0 1 1])
-for ll=1:20,
-    subplottight(4,5,ll), hold on;for F = 0.1:0.1:0.9,iso_f_plot(F);end;axis square;
+for ll=cat_id,
+    subplottight(4,5,ll),
+    hold on;for F = 0.1:0.1:0.9,iso_f_plot(F);end;axis square;
     % iso_f_axis([measures{kk} '_' num2str(ll)])
     fig_handlers = [];
     legends = {};
@@ -67,17 +78,30 @@ for ll=1:20,
             display(['Evaluating method: ' methods(ii).name ' for class ' classes{ll} '...']);
             % Plot the contours only in 'fb'
             if strcmp(methods(ii).type,'contour'),style='-';else style='-';end
-            % Get all parameters for that method from file
-            params = get_method_parameters(methods(ii).name);
-            % Gather pre-computed results
-            curr_meas = gather_measure(methods(ii).name,params,'fb',database,gt_set,ll);
-            curr_ods  = general_ods(curr_meas);
-            curr_ap   = general_ap(curr_meas);
+            
+            if exist(fullfile(seism_root,'results','pr_curves',database, [database '_' gt_set '_' measures{1} '_' methods(ii).name '_' num2str(ll) '.txt']),'file'),
+                temp = importdata(fullfile(seism_root,'results','pr_curves',database, [database '_' gt_set '_' measures{1} '_' methods(ii).name '_' num2str(ll) '.txt']));
+                curr_meas.mean_prec = temp.data(:,1);
+                curr_meas.mean_rec = temp.data(:,2);
+                temp = importdata(fullfile(seism_root,'results','pr_curves',database, [database '_' gt_set '_' measures{1} '_' methods(ii).name '_' num2str(ll) '_ods.txt']));
+                curr_ods.mean_prec = temp.data(1);
+                curr_ods.mean_rec = temp.data(2);
+                curr_ods.mean_value = importdata(fullfile(seism_root,'results','pr_curves',database, [database '_' gt_set '_' measures{1} '_' methods(ii).name '_' num2str(ll) '_ods_f.txt']));
+                curr_ap = importdata(fullfile(seism_root,'results','pr_curves',database, [database '_' gt_set '_' measures{1} '_' methods(ii).name '_' num2str(ll) '_ap.txt']));
+            else
+                % Get all parameters for that method from file
+                params = get_method_parameters(methods(ii).name);
+                % Gather pre-computed results
+                curr_meas = gather_measure(methods(ii).name,params,'fb',database,gt_set,ll);
+                curr_ods  = general_ods(curr_meas);
+                curr_ap   = general_ap(curr_meas);
+            end
             % Plot method
             display(['ODS: ' num2str(curr_ods.mean_value) ' AP: ' num2str(curr_ap) ])
             fig_handlers(end+1) = plot(curr_meas.mean_rec,curr_meas.mean_prec,[colors{ii} style],'LineWidth',2); %#ok<SAGROW>
             plot(curr_ods.mean_rec,curr_ods.mean_prec,[colors{ii} '*'],'LineWidth',2)
             legends{end+1} = ['[F:' sprintf('%.0f',curr_ods.mean_value*100) ', AP:' sprintf('%.0f',curr_ap*100) '] ' methods(ii).legend ]; %#ok<SAGROW>
+            Fscore(ii,ll) = curr_ods.mean_value*100;
         end
     end
     
@@ -89,7 +113,9 @@ end
 %Write the results for latex processing
 if writePR,
     if strcmp(database,'SBD'),
-        pr_curves_to_file(measures, database, gt_set, methods, cat_id);
+        for ll=cat_id,
+            pr_curves_to_file(measures, database, gt_set, methods, ll);
+        end
     else
         pr_curves_to_file(measures, database, gt_set, methods);
     end

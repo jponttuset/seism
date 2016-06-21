@@ -81,6 +81,7 @@ elif database == 'SBD':
 	if len(sys.argv)>7:
 		cat_id = sys.argv[7]
 	else:
+		print 'category id not defined: Evaluating default category Person'
 		cat_id='15'
 else:
 	print "ERROR: Unknown database"
