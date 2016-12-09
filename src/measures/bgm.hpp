@@ -17,8 +17,8 @@
 #ifndef IMAGEPLUS_BGM_HPP
 #define IMAGEPLUS_BGM_HPP
 
-#include <aux/multiarray.hpp>
-#include <aux/hungarian.hpp>
+#include <misc/multiarray.hpp>
+#include <misc/hungarian.hpp>
 
 
 //! It computes the Bipartite Graph Matching between two image partitions.

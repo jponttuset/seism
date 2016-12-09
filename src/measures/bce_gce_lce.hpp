@@ -17,7 +17,7 @@
 #ifndef IMAGEPLUS_BCE_GCE_LCE_HPP
 #define IMAGEPLUS_BCE_GCE_LCE_HPP
 
-#include <aux/multiarray.hpp>
+#include <misc/multiarray.hpp>
 
 //! It computes the Bidirectional Consistency Error (BCE) between two image partitions. 
 //!

@@ -17,7 +17,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <string.h>
-#include <aux/intersection_matrix.hpp>
+#include <misc/intersection_matrix.hpp>
 #include "mex.h"
 
 #include <measures/fop.hpp>

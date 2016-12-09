@@ -1,4 +1,4 @@
-% function eval_partitions(method, parameter, measure, gt_set)
+% function eval_method(method, parameter, measure, read_part_fun, database, gt_set, num_params, segm_or_contour)
 % ------------------------------------------------------------------------ 
 %  Copyright (C)
 %  Universitat Politecnica de Catalunya BarcelonaTech (UPC) - Spain
@@ -12,18 +12,32 @@
 %  "Measures and Meta-Measures for the Supervised Evaluation of Image Segmentation,"
 %  Computer Vision and Pattern Recognition (CVPR), 2013.
 % ------------------------------------------------------------------------
-function eval_method(method, parameter, measure, read_part_fun, database, gt_set, num_params, segm_or_contour)
+function eval_method(method, parameter, measure, read_part_fun, database, gt_set, num_params, segm_or_contour, cat_ids)
 
 if ~exist('segm_or_contour','var')
     segm_or_contour = 0;
 end
 
-% Load indices
-im_ids = db_ids(database, gt_set);
-
 % I/O folders
 method_dir = fullfile(seism_root,'datasets',database,method);
 res_dir    = fullfile(seism_root,'results' ,database,method);
+
+kill_internal = 0;
+if strcmp(database,'Pascal'),
+    maxDist = 0.01;
+elseif strcmp(database,'SBD'),
+    maxDist = 0.02;
+    kill_internal = 1;
+    method_dir = fullfile(seism_root,'datasets',database,method,num2str(cat_ids));
+    res_dir    = fullfile(seism_root,'results' ,database,method,num2str(cat_ids));
+else
+    maxDist = 0.0075;
+end
+
+% Load indices
+im_ids = db_ids(database, gt_set);
+
+
 if ~exist(res_dir,'dir')
     mkdir(res_dir)
 end
@@ -58,8 +72,12 @@ for ii=1:numel(im_ids)
     curr_id = im_ids{ii};
 
     % Read ground truth (gt_seg)
-    gt_seg = db_gt(database,curr_id);
-    
+    lkup = [];
+    if strcmp(database,'SBD'),
+        [gt_seg,~,~,~,lkup] = db_gt(database,curr_id,'cls',cat_ids);
+    else
+        gt_seg = db_gt(database,curr_id);
+    end
     % Read the partition
     partition_or_contour = read_part_fun(method_dir, parameter, num2str(curr_id));
 
@@ -75,12 +93,12 @@ for ii=1:numel(im_ids)
     
     % Compute measure
     if segm_or_contour==0 % Segmentation
-        value = eval_segm(partition_or_contour,gt_seg,measure);
+        value = eval_segm(partition_or_contour,gt_seg,measure, maxDist, kill_internal, lkup);
     else % Contour
         if ~strcmp(measure,'fb')
             error('Contours can only be evaluated using the ''fb'' measure')
         end
-        value = eval_cont(partition_or_contour,gt_seg);
+        value = eval_cont(partition_or_contour, gt_seg, maxDist, kill_internal,lkup);
     end
     
     % Write to file

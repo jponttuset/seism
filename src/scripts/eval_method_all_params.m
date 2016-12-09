@@ -14,20 +14,22 @@
 %  Jordi Pont-Tuset <jordi.pont@upc.edu>
 %  March 2011
 % ------------------------------------------------------------------------ 
-function eval_method_all_params(method, measure, read_part_fun, database, gt_set, segm_or_contour)
+function eval_method_all_params(method, measure, read_part_fun, database, gt_set, segm_or_contour,cat_ids)
 
 % Is it a partition or a contour detection?
 if ~exist('segm_or_contour','var')
     segm_or_contour = 0;
 end
-
+if ~exist('cat_ids','var')
+   cat_ids = 0;
+end
 %% Get all parameters for that method from file
 params = get_method_parameters(method);
 
 for ii=1:length(params)
-    experiments(ii).method = method; %#ok<AGROW>
+    experiments(ii).method    = method;     %#ok<AGROW>
     experiments(ii).parameter = params{ii}; %#ok<AGROW>
-    experiments(ii).measure = measure; %#ok<AGROW>
+    experiments(ii).measure   = measure;    %#ok<AGROW>
 end
 disp(['Total number of parameterizations: ' num2str(ii)])
 
@@ -39,7 +41,7 @@ disp(['Total number of parameterizations: ' num2str(ii)])
 %     parameter   = experiments(nn).parameter;
 %     measure     = experiments(nn).measure;
 %     disp(['Starting: ' method_name ' (' parameter ') for measure ' measure ' on ' gt_set])
-%     eval_method(method_name, parameter, measure, read_part_fun, database,  gt_set, length(params), segm_or_contour)
+%     eval_method(method_name, parameter, measure, read_part_fun, database,  gt_set, length(params), segm_or_contour,cat_id)
 %     disp(['Done:     ' method_name ' (' parameter ') for measure ' measure ' on ' gt_set])
 % end
 % matlabpool close;
@@ -50,7 +52,7 @@ for nn=1:length(experiments)
     eval_method(experiments(nn).method,...
                 experiments(nn).parameter,...
                 experiments(nn).measure,...
-                read_part_fun, database, gt_set, length(params), segm_or_contour);
+                read_part_fun, database, gt_set, length(params), segm_or_contour,cat_ids);
 end
 
 

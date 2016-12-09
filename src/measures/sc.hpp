@@ -17,7 +17,7 @@
 #ifndef IMAGEPLUS_SC_HPP
 #define IMAGEPLUS_SC_HPP
 
-#include <aux/multiarray.hpp>
+#include <misc/multiarray.hpp>
 
 /*! It computes the Segmentation Covering of one partition to the ground-truth ands viceversa
  * 

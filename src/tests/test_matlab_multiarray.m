@@ -1,8 +1,5 @@
-function test_suite = test_matlab_multiarray
-%test_matlab_multiarray Test suite for matlab_multiarray
-initTestSuite;
 
-function test_types
+
 input = rand(100,200)*50;
 [output1, output2, output3, output4, output5, output6, ...
  output7, output8, output9, output10, output11] =...

@@ -17,7 +17,7 @@
 #ifndef IMAGEPLUS_DHD_HPP
 #define IMAGEPLUS_DHD_HPP
 
-#include <aux/multiarray.hpp>
+#include <misc/multiarray.hpp>
 
 //! It computes the Directional Hamming Distance (DHD) between two image partitions.
 //! It corresponds to the minimum number of pixels that have to be ignored from both partitions for
