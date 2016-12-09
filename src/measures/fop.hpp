@@ -18,7 +18,7 @@
 #define IMAGEPLUS_FOP_HPP
 
 #include <map>
-#include <aux/multiarray.hpp>
+#include <misc/multiarray.hpp>
 
 /*! Constants identifying each type of intances classification of the ObjectsAndPartsF measures.
  *

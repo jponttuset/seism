@@ -31,8 +31,8 @@
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/array.hpp>
 
-#include <aux/config.hpp>
-#include <aux/types.hpp>
+#include <misc/config.hpp>
+#include <misc/types.hpp>
 
 
 

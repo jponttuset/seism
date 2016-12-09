@@ -17,9 +17,9 @@
 #ifndef IMAGEPLUS_INTERSECTION_MATRIX_HPP
 #define IMAGEPLUS_INTERSECTION_MATRIX_HPP
 
-#include <aux/types.hpp>
-#include <aux/matlab_multiarray.hpp>
-#include <aux/multiarray.hpp>
+#include <misc/types.hpp>
+#include <misc/matlab_multiarray.hpp>
+#include <misc/multiarray.hpp>
 
 #include <set>
 #include <list>

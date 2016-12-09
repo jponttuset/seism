@@ -1,5 +1,5 @@
 #include "mex.h"
-#include "aux/matlab_multiarray.hpp"
+#include "misc/matlab_multiarray.hpp"
 #include <iostream>
 
 

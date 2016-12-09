@@ -17,7 +17,7 @@
 #ifndef IMAGEPLUS_PRI_FR_HPP
 #define IMAGEPLUS_PRI_FR_HPP
 
-#include <aux/multiarray.hpp>
+#include <misc/multiarray.hpp>
 
 /*! Class that handles the measures based on the "pairs-of-pixels" approach
  *  

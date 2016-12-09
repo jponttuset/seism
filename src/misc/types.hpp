@@ -51,16 +51,15 @@ typedef float                 float32;
 //! Signed 64 bits float     
 typedef double                float64;
 
+//! Type for size and dims variables \ingroup ImagePlusTypes
+typedef uint64                size_type;
+
 //! Boost bidirectional map to create a LUT
 //! See http://www.boost.org/doc/libs/1_35_0/libs/bimap/doc/html/boost_bimap/one_minute_tutorial.html
 typedef boost::bimaps::bimap<
         boost::bimaps::multiset_of< uint32, std::less<uint32> >,
         boost::bimaps::multiset_of< uint32, std::less<uint32> >
     > part_bimap;
-
-//! Type for size and dims variables \ingroup ImagePlusTypes
-typedef uint64                size_type;
-
 
 //! Alias for the largest floating point type in current architecture. Use only to safely contain data before type conversions in some templated functions.
 //! Do not use this type if not absolutely necessary. 

@@ -17,7 +17,7 @@
 #ifndef IMAGEPLUS_VOI_HPP
 #define IMAGEPLUS_VOI_HPP
 
-#include <aux/multiarray.hpp>
+#include <misc/multiarray.hpp>
 
 /*! It computes the Variation of Information measure
  * 

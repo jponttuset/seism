@@ -60,8 +60,8 @@ measures = {'fb',...  % Precision-recall for boundaries
 
 % Define all methods to be compared
 methods  = [];
-switch database,
-    case 'BSDS500',
+switch database
+    case 'BSDS500'
         gt_set   = 'test';
         methods(end+1).name = 'HED';             methods(end).io_func = @read_one_cont_png; methods(end).legend = methods(end).name;  methods(end).type = 'contour';
        %methods(end+1).name = 'COB';             methods(end).io_func = @read_one_ucm;      methods(end).legend = 'COB';              methods(end).type = 'segmentation';        
@@ -75,7 +75,7 @@ switch database,
         methods(end+1).name = 'EGB';             methods(end).io_func = @read_one_prl;      methods(end).legend = methods(end).name;  methods(end).type = 'segmentation';
         
         
-    case 'PASCALContext',
+    case 'PASCALContext'
         gt_set   = 'test_new';
         
         methods(end+1).name = 'COB';             methods(end).io_func = @read_one_ucm;      methods(end).legend = 'COB train';        methods(end).type = 'segmentation';
@@ -87,7 +87,7 @@ switch database,
         methods(end+1).name = 'MCG-BSDS500';     methods(end).io_func = @read_one_ucm;      methods(end).legend = methods(end).name;  methods(end).type = 'segmentation';
         methods(end+1).name = 'SE-BSDS500';      methods(end).io_func = @read_one_cont_png; methods(end).legend = methods(end).name; methods(end).type = 'contour';
         
-    case 'Pascal',
+    case 'Pascal'
         gt_set   = 'Segmentation_val_2012';
         
         methods(end+1).name = 'COB';             methods(end).io_func = @read_one_ucm;      methods(end).legend = methods(end).name;  methods(end).type = 'segmentation';
@@ -95,12 +95,12 @@ switch database,
         methods(end+1).name = 'HED-BSDS500';     methods(end).io_func = @read_one_cont_png; methods(end).legend = methods(end).name;  methods(end).type = 'contour';
         methods(end+1).name = 'MCG-BSDS500';     methods(end).io_func = @read_one_ucm;      methods(end).legend = methods(end).name;  methods(end).type = 'segmentation';
         
-    case 'SBD',
+    case 'SBD'
         gt_set   = 'val';
         cat_id = 15;
         methods(end+1).name = 'HED';             methods(end).io_func = @read_one_cont_png; methods(end).legend = methods(end).name; methods(end).type = 'contour';
         methods(end+1).name = 'COB';             methods(end).io_func = @read_one_ucm;      methods(end).legend = methods(end).name; methods(end).type = 'segmentation';
-    otherwise,
+    otherwise
         error('Unknown name of the database');
 end
 
@@ -110,13 +110,13 @@ colors = {'b','g','r','k','m','c','y','b','g','r','k','m','c','y','k','g','b','g
 %% Evaluate your method (just once for all parameters)
 
 % % Evaluate using the correct reading function
-if ~USEprecomputed,
+if ~USEprecomputed
     for ii=1:length(measures)
         for jj=1:length(methods)
             % Contours only in 'fb'
             is_cont = strcmp(methods(ii).type,'contour');
             if strcmp(measures{ii},'fb') || ~is_cont
-                if exist('cat_id','var'),
+                if exist('cat_id','var')
                     eval_method_all_params(methods(jj).name, measures{ii}, methods(jj).io_func, database, gt_set, is_cont, cat_id);
                 else
                     eval_method_all_params(methods(jj).name, measures{ii}, methods(jj).io_func, database, gt_set, is_cont);
@@ -155,13 +155,13 @@ for kk=1:length(measures)
         if strcmp(measures{kk},'fb') || strcmp(methods(ii).type,'segmentation')
             fprintf([methods(ii).name ': ' repmat(' ',[1,15-length(methods(ii).name)])]);
 
-            if strcmp(methods(ii).type,'contour'),style='--';else style='-';end
+            if strcmp(methods(ii).type,'contour'),style='--';else, style='-';end
             
             % Get all parameters for that method from file
             params = get_method_parameters(methods(ii).name);
             
             % Gather pre-computed results
-            if strcmp(database,'SBD'),
+            if strcmp(database,'SBD')
                 curr_meas = gather_measure(methods(ii).name,params,measures{kk},database,gt_set,cat_id);
             else
                 curr_meas = gather_measure(methods(ii).name,params,measures{kk},database,gt_set);
@@ -177,15 +177,15 @@ for kk=1:length(measures)
         end
     end
     
-    if strfind(gt_set,'_'), set_title = strrep(gt_set,'_','\_');else set_title=gt_set;end
+    if strfind(gt_set,'_'), set_title = strrep(gt_set,'_','\_');else, set_title=gt_set;end
     
     title([measures{kk} ' ' database ' ' set_title]);
     legend(fig_handlers,legends, 'Location','NorthEastOutside')
 end
 
 %Write the results for LaTeX processing
-if writePR,
-    if strcmp(database,'SBD'),
+if writePR
+    if strcmp(database,'SBD')
         pr_curves_to_file(measures, database, gt_set, methods, cat_id);
     else
         pr_curves_to_file(measures, database, gt_set, methods);
