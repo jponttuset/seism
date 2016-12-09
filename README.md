@@ -11,6 +11,9 @@ Jordi Pont-Tuset and Ferran Marques, CVPR 2013.
 The [project page](http://vision.ee.ethz.ch/~biwiproposals/seism/) contains updated evaluation, and browsable results from all techniques.
 
 ###Version history:
+**v3.0**: Generalization to Pascal Context, Pascal VOC, SBD.
+
+**v2.1**: Bug fixes over 2.0. Stable release.
 
 **v2.0**: Beta release that includes all experiments on the PAMI paper. It includes the following improvements:
 - Easily evaluate any type of format via input converters.
