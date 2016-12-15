@@ -17,7 +17,8 @@
 #ifndef IMAGEPLUS_DHD_HPP
 #define IMAGEPLUS_DHD_HPP
 
-#include <misc/multiarray.hpp>
+#include <misc/mex_helpers.hpp>
+#include <misc/intersection_matrix.hpp>
 
 //! It computes the Directional Hamming Distance (DHD) between two image partitions.
 //! It corresponds to the minimum number of pixels that have to be ignored from both partitions for
@@ -29,10 +30,10 @@
 //!   IEEE Transactions on Image Processing 14 (2005) 1773-1782.
 //!
 //! \author Jordi Pont Tuset <jordi.pont@upc.edu>
-uint64 directional_hamming_distance(const MultiArray<uint64,2>& intersect_matrix)
+uint64 directional_hamming_distance(const inters_type& intersect_matrix)
 {
-    std::size_t num_reg_1 = intersect_matrix.dims()[0];
-    std::size_t num_reg_2 = intersect_matrix.dims()[1];
+    std::size_t num_reg_1 = intersect_matrix.cols();
+    std::size_t num_reg_2 = intersect_matrix.rows();
 
     // The pixels that remain are those with maximum intersection with the reference partition
     uint64 curr_max, sum_max=0, image_area=0;
@@ -42,10 +43,10 @@ uint64 directional_hamming_distance(const MultiArray<uint64,2>& intersect_matrix
         //uint64 ii_max=0; // AGIL: ii_max was set but not used, so it has been removed to avoid warnings in GCC-4.6
         for(uint64 ii=0; ii<num_reg_1; ii++)
         {
-            image_area += intersect_matrix[ii][jj];
-            if(curr_max<intersect_matrix[ii][jj])
+            image_area += intersect_matrix(ii,jj);
+            if(curr_max<intersect_matrix(ii,jj))
             {
-                curr_max = intersect_matrix[ii][jj];
+                curr_max = intersect_matrix(ii,jj);
                 //ii_max   = ii; // AGIL: ii_max was set but not used, so it has been removed to avoid warnings in GCC-4.6
             }
         }

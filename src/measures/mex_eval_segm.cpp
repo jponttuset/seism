@@ -28,7 +28,7 @@
 #include <measures/voi.hpp>
 #include <measures/bce_gce_lce.hpp>
 #include <measures/sc.hpp>
-// #include <measures/dhd.hpp>
+#include <measures/dhd.hpp>
 
 typedef unsigned int uint32;
 
@@ -246,22 +246,22 @@ mexFunction( int nlhs, mxArray *plhs[],
         results.push_back(bgm);
     }
     
-//     /***********************************************/
-//     /*    Directional Hamming Distance (DHD)       */
-//     /***********************************************/
-//     if (!strcmp(measure_id.c_str(),"dhd"))
-//     {
-//         double dhd = 0;
-//         for(std::size_t ii=0; ii<n_gts; ++ii)
-//         {
-//             dhd += (double)directional_hamming_distance(int_mats[ii]);
-//         }
-//         dhd /= (double)n_gts;
-//         dhd /= (double)(part.cols()*part.rows());  // Normalize
-//         dhd = 1-dhd;  // Make it a similarity measure (1->Best)
-//         results.push_back(dhd); 
-//     }
-//     
+    /***********************************************/
+    /*    Directional Hamming Distance (DHD)       */
+    /***********************************************/
+    if (!strcmp(measure_id.c_str(),"dhd"))
+    {
+        double dhd = 0;
+        for(std::size_t ii=0; ii<n_gts; ++ii)
+        {
+            dhd += (double)directional_hamming_distance(int_mats[ii]);
+        }
+        dhd /= (double)n_gts;
+        dhd /= (double)(part.cols()*part.rows());  // Normalize
+        dhd = 1-dhd;  // Make it a similarity measure (1->Best)
+        results.push_back(dhd); 
+    }
+    
 //     /***********************************************/
 //     /*     Swapped Segmentation Covering (SSC)     */
 //     /***********************************************/
