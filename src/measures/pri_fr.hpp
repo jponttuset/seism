@@ -17,7 +17,8 @@
 #ifndef IMAGEPLUS_PRI_FR_HPP
 #define IMAGEPLUS_PRI_FR_HPP
 
-#include <misc/multiarray.hpp>
+#include <misc/mex_helpers.hpp>
+#include <misc/intersection_matrix.hpp>
 
 /*! Class that handles the measures based on the "pairs-of-pixels" approach
  *  
@@ -36,14 +37,13 @@ public:
      * 
      *  \param[in] intersect_matrix : Intersection matrix between the two partitions
      */
-    void calculate(const MultiArray<uint64,2>& intersect_matrix)
+    void calculate(const inters_type& intersect_matrix)
     {
-        uint32 num_reg_1 = intersect_matrix.dims()[0];
-        uint32 num_reg_2 = intersect_matrix.dims()[1];
+        uint32 num_reg_1 = intersect_matrix.cols();
+        uint32 num_reg_2 = intersect_matrix.rows();
         
-        MultiArray<uint64,1> region_areas_1(num_reg_1);
-        MultiArray<uint64,1> region_areas_2(num_reg_2);
-        region_areas_1 = 0; region_areas_2 = 0;
+        std::vector<uint64> region_areas_1(num_reg_1,0);
+        std::vector<uint64> region_areas_2(num_reg_2,0);
         uint64 image_area=0;
         
         uint64 sum_inter_squared = 0;
@@ -51,10 +51,10 @@ public:
         {
             for(std::size_t ii = 0; ii < num_reg_1; ii++)
             {
-                image_area += intersect_matrix[ii][jj];
-                sum_inter_squared += (intersect_matrix[ii][jj]*intersect_matrix[ii][jj]);
-                region_areas_1[ii] = region_areas_1[ii] +  intersect_matrix[ii][jj];
-                region_areas_2[jj] = region_areas_2[jj] +  intersect_matrix[ii][jj];
+                image_area += intersect_matrix(ii,jj);
+                sum_inter_squared += (intersect_matrix(ii,jj)*intersect_matrix(ii,jj));
+                region_areas_1[ii] = region_areas_1[ii] +  intersect_matrix(ii,jj);
+                region_areas_2[jj] = region_areas_2[jj] +  intersect_matrix(ii,jj);
             }
         }
         
@@ -85,10 +85,10 @@ public:
      * 
      *  \return Rand index between partition and ground_truth
      */
-    float64 rand_index()
+    double rand_index()
     {
-        ASSERT(_n11+_n01!=0, "PairsOfPixels: You should call claculate before computing any quality index");
-        return (float64)(_n11+_n00)/(float64)(_n11+_n00+_n01+_n10);
+        mxAssert(_n11+_n01!=0, "PairsOfPixels: You should call claculate before computing any quality index");
+        return (double)(_n11+_n00)/(double)(_n11+_n00+_n01+_n10);
     }
 
     /*! Precision for regions. calculate() should be called before
@@ -99,10 +99,10 @@ public:
      * 
      *  \return Precision for regions between partition and ground_truth
      */
-    float64 precision()
+    double precision()
     {
-        ASSERT(_n11+_n01!=0, "PairsOfPixels: You should call claculate before computing any quality index");
-        return (float64)(_n11)/(float64)(_n11+_n10);
+        mxAssert(_n11+_n01!=0, "PairsOfPixels: You should call claculate before computing any quality index");
+        return (double)(_n11)/(double)(_n11+_n10);
     }
 
     /*! Recall for regions. calculate() should be called before
@@ -113,10 +113,10 @@ public:
      * 
      *  \return Recall for regions between partition and ground_truth
      */            
-    float64 recall()
+    double recall()
     {
-        ASSERT(_n11+_n01!=0, "PairsOfPixels: You should call claculate before computing any quality index");
-        return (float64)(_n11)/(float64)(_n11+_n01);
+        mxAssert(_n11+_n01!=0, "PairsOfPixels: You should call claculate before computing any quality index");
+        return (double)(_n11)/(double)(_n11+_n01);
     }
 
 private:

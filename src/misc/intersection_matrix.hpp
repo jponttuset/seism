@@ -18,23 +18,30 @@
 #define IMAGEPLUS_INTERSECTION_MATRIX_HPP
 
 #include <set>
+#include <map>
 #include <list>
 #include <misc/mex_helpers.hpp>
+
+typedef unsigned int uint32;
+typedef unsigned long long uint64;
+
+typedef mex_types<uint32>::eigen_type part_type;
+typedef mex_types<uint64>::eigen_type inters_type;
+
+typedef std::map<uint32,uint32> part_bimap;
+
 
 /*! It relabels a partition in scanning order. Bimaps are the look up tables of the relabeling.
  * 
  * \author Jordi Pont Tuset <jordi.pont@upc.edu>
  */
-uint32 relabel(const MultiArray<uint32,2>& partition_in, MultiArray<uint32,2>& partition_out, part_bimap& bimap)
+uint32 relabel(const part_type& partition_in, part_type& partition_out, part_bimap& bimap)
 {
-    mxAssert(partition_out.dims()[0]==partition_in.dims()[0], "relabel: The x sizes of the partitions are not equal");
-    mxAssert(partition_out.dims()[1]==partition_in.dims()[1], "relabel: The y sizes of the partitions are not equal");
+    mxAssert(partition_out.cols==partition_in.cols(), "relabel: The x sizes of the partitions are not equal");
+    mxAssert(partition_out.rows==partition_in.rows(), "relabel: The y sizes of the partitions are not equal");
      
-    std::size_t size_x = partition_in.dims()[0];
-    std::size_t size_y = partition_in.dims()[1];
-    
-    part_bimap::left_const_iterator it;
-    part_bimap::left_const_iterator it_end = bimap.left.end();
+    std::size_t size_x = partition_in.cols();
+    std::size_t size_y = partition_in.rows();
     
     uint32 max_region = 0;
     
@@ -42,17 +49,17 @@ uint32 relabel(const MultiArray<uint32,2>& partition_in, MultiArray<uint32,2>& p
     {
         for(std::size_t jj=0; jj<size_y; jj++)
         {
-            it = bimap.left.find(partition_in[ii][jj]);
+            auto it = bimap.find(partition_in(ii,jj));
             
-            if(it == it_end)
+            if(it == bimap.end())
             {
-                bimap.insert(part_bimap::value_type(partition_in[ii][jj], max_region) );
-                partition_out[ii][jj] = max_region;
+                bimap.insert(part_bimap::value_type(partition_in(ii,jj), max_region) );
+                partition_out(ii,jj) = max_region;
                 max_region++;
             }
             else
             {
-                partition_out[ii][jj] = it->second;
+                partition_out(ii,jj) = it->second;
             }
         }
     }
@@ -61,7 +68,7 @@ uint32 relabel(const MultiArray<uint32,2>& partition_in, MultiArray<uint32,2>& p
 }
 
 
-uint32 relabel(const MultiArray<uint32,2>& partition_in, MultiArray<uint32,2>& partition_out)
+uint32 relabel(const part_type& partition_in, part_type& partition_out)
 {
     part_bimap bimap;
     return relabel(partition_in, partition_out, bimap);
@@ -82,28 +89,28 @@ uint32 relabel(const MultiArray<uint32,2>& partition_in, MultiArray<uint32,2>& p
  * \param[out]  bimap2      : Bimap (look up table) between the matrix coordinates and the original regions of partition2
  * \return Intersection matrix             
  */
-MultiArray<uint64,2> intersection_matrix(const MultiArray<uint32,2>& partition1, const MultiArray<uint32,2>& partition2, part_bimap& bimap1, part_bimap& bimap2)
+inters_type intersection_matrix(const part_type& partition1, const part_type& partition2, part_bimap& bimap1, part_bimap& bimap2)
 {
-    uint64 s_x = partition1.dims()[0];
-    uint64 s_y = partition1.dims()[1];
+    uint64 s_x = partition1.cols();
+    uint64 s_y = partition1.rows();
 
-    mxAssert(s_x==partition2.dims()[0], "intersection_matrix: The X size must be the same for both partitions");
-    mxAssert(s_y==partition2.dims()[1], "intersection_matrix: The Y size must be the same for both partitions");
+    mxAssert(s_x==partition2.cols(), "intersection_matrix: The X size must be the same for both partitions");
+    mxAssert(s_y==partition2.rows(), "intersection_matrix: The Y size must be the same for both partitions");
 
-    MultiArray<uint32,2> partition1_relab(boost::extents[s_x][s_y]);
-    MultiArray<uint32,2> partition2_relab(boost::extents[s_x][s_y]);
+    part_type partition1_relab(s_x,s_y);
+    part_type partition2_relab(s_x,s_y);
 
     uint32 num_reg_1 = relabel(partition1, partition1_relab, bimap1);
     uint32 num_reg_2 = relabel(partition2, partition2_relab, bimap2);
 
     // "coincidence[i][j]" is a matrix that stores the number of intersecting pixels between region "i"
     // from the reference partition and region "j" from the fine partition
-    MultiArray<uint64,2> inter_matrix(boost::extents[num_reg_1][num_reg_2]);
+    inters_type inter_matrix(num_reg_1,num_reg_2);
     for(uint64 jj = 0; jj < s_y; ++jj)
     {
         for(uint64 ii = 0; ii < s_x; ++ii)
         {
-            inter_matrix[partition1_relab[ii][jj]][partition2_relab[ii][jj]] += 1;
+            inter_matrix(partition1_relab(ii,jj),partition2_relab(ii,jj)) += 1;
         }
     }
 
@@ -125,7 +132,7 @@ MultiArray<uint64,2> intersection_matrix(const MultiArray<uint32,2>& partition1,
  * \param[in]  partition2  : Second partition
  * \return Intersection matrix             
  */ 
-MultiArray<uint64,2> intersection_matrix(MultiArray<uint32,2>& partition1, MultiArray<uint32,2>& partition2)
+inters_type intersection_matrix(const part_type& partition1, const part_type& partition2)
 {
     part_bimap bimap1;
     part_bimap bimap2;

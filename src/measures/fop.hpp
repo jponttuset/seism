@@ -18,7 +18,8 @@
 #define IMAGEPLUS_FOP_HPP
 
 #include <map>
-#include <misc/multiarray.hpp>
+#include <misc/mex_helpers.hpp>
+#include <misc/intersection_matrix.hpp>
 
 /*! Constants identifying each type of intances classification of the ObjectsAndPartsF measures.
  *
@@ -44,18 +45,18 @@ enum RegionClassificationTypes
 class ObjectsAndPartsF
 {
     //! Resulting Precision
-    float64                 _precision;
+    double                 _precision;
     //! Resulting Recall
-    float64                 _recall;
+    double                 _recall;
     //! Resulting F
-    float64                 _f_measure;
+    double                 _f_measure;
 
     //! Threshold for a region to be classified as object
-    float64                 _gamma_obj;
+    double                 _gamma_obj;
     //! Threshold for a region to be classified as part
-    float64                 _gamma_part;
+    double                 _gamma_part;
     //! Weight given to parts
-    float64                 _beta;
+    double                 _beta;
 public:
 
     /*! Default constructor
@@ -70,7 +71,7 @@ public:
      *
      *  \author Jordi Pont Tuset <jordi.pont@upc.edu>
      */
-    ObjectsAndPartsF(float64 gamma_object, float64 gamma_part, float64 beta)
+    ObjectsAndPartsF(double gamma_object, double gamma_part, double beta)
        : _precision(), _recall(), _f_measure(), _gamma_obj(gamma_object), _gamma_part(gamma_part), _beta(beta)
     {
     }
@@ -81,14 +82,14 @@ public:
      *
      *  \param[in] intersect_matrix : Intersection matrices between the partition and the set of GT partitions
      */
-    void calculate(const std::vector<MultiArray<uint64, 2> >& intersect_matrices);
+    void calculate(const std::vector<inters_type>& intersect_matrices);
 
     /*!
      * ObjectsAndParts precision
      *
      * \return ObjectsAndParts precision
      */
-    float64 precision()
+    double precision()
     {
         return _precision;
     }
@@ -98,7 +99,7 @@ public:
      *
      * \return ObjectsAndParts recall
      */
-    float64 recall()
+    double recall()
     {
         return _recall;
     }
@@ -109,7 +110,7 @@ public:
      *
      * \return ObjectsAndParts F measure
      */
-    float64 f_measure()
+    double f_measure()
     {
         return _f_measure;
     }
@@ -173,7 +174,7 @@ private:
     }
 
     //! Area percentile considered
-    float64 _area_percentile;
+    double _area_percentile;
     //! Map between each region index in scanning order of partition and its RegionClassificationTypes
     std::vector<RegionClassificationTypes>                _classification_part;
     //! Map between each region index in scanning order of ground_truth and its RegionClassificationTypes
@@ -183,13 +184,13 @@ private:
     //! Mapping between the regions in ground_truth to those in partition
     std::vector<std::map<uint32,uint32> >             _mapping_gt;
     //! Is each region in the partition a candidate?
-    std::vector<uint8>                            _candidate_part;
+    std::vector<unsigned char>                            _candidate_part;
     //! Is each region in the GT a candidate?
-    std::vector<std::vector<uint8> >                _candidate_gt;
+    std::vector<std::vector<unsigned char>>                _candidate_gt;
     //! Degree of fragmentation for GT regions
-    std::vector<std::vector<float64> >                 _recall_gt;
+    std::vector<std::vector<double>>                 _recall_gt;
     //! Degree of fragmentation for partition regions
-    std::vector<float64>                               _prec_part;
+    std::vector<double>                               _prec_part;
 
     //! Number of candidates in partition
     uint32 num_candidates_part;
@@ -204,19 +205,19 @@ private:
     //! Number of parts in the GT
     uint32 num_parts_gt;
     //! Degree of fragmentation in partition
-    float64 num_underseg_part;
+    double num_underseg_part;
     //! Degree of fragmentation in GT
-    float64 num_overseg_gt;
+    double num_overseg_gt;
 };
 
 
 
 
-void ObjectsAndPartsF::calculate(const std::vector<MultiArray<uint64, 2> >& intersect_matrices)
+void ObjectsAndPartsF::calculate(const std::vector<inters_type>& intersect_matrices)
 {
     _clear();
     _area_percentile = 0.99;
-    uint32 num_reg_part = intersect_matrices[0].dims()[0];
+    uint32 num_reg_part = intersect_matrices[0].cols();
     std::size_t n_gts = intersect_matrices.size();
     _classification_part.resize(num_reg_part); // Allocate
     _prec_part.resize(num_reg_part); // Allocate
@@ -225,24 +226,20 @@ void ObjectsAndPartsF::calculate(const std::vector<MultiArray<uint64, 2> >& inte
     _recall_gt.resize(n_gts); // Allocate
 
 
-    MultiArray<uint64,1> region_areas_part(num_reg_part);
-    std::vector<MultiArray<uint64,1> > region_areas_gt(n_gts);
+    std::vector<uint64> region_areas_part(num_reg_part);
+    std::vector<std::vector<uint64>> region_areas_gt(n_gts);
     std::vector<uint32> num_reg_gt(n_gts);
-    region_areas_part = 0;
     uint64 image_area=0;
 
     // Get areas and intersections
     for(std::size_t part_id=0; part_id<n_gts; ++part_id)
     {
-        num_reg_gt[part_id]  = intersect_matrices[part_id].dims()[1];
+        num_reg_gt[part_id]  = intersect_matrices[part_id].rows();
 
         _classification_gt[part_id].resize(num_reg_gt[part_id]); // Allocate
         _recall_gt[part_id].resize(num_reg_gt[part_id]); // Allocate
 
-        boost::array<std::size_t,1> dims;
-        dims[0] = num_reg_gt[part_id];
-        region_areas_gt[part_id].resize(dims); // Allocate
-        region_areas_gt[part_id] = 0;
+        region_areas_gt[part_id] = std::vector<uint64>(num_reg_gt[part_id],0); // Allocate
 
         // Compute region and image areas
         if(part_id==0)
@@ -251,9 +248,9 @@ void ObjectsAndPartsF::calculate(const std::vector<MultiArray<uint64, 2> >& inte
             {
                 for(std::size_t jj=0; jj<num_reg_part; jj++)
                 {
-                    image_area += intersect_matrices[part_id][jj][ii];
-                    region_areas_part[jj] = region_areas_part[jj] + intersect_matrices[part_id][jj][ii];
-                    region_areas_gt[part_id][ii]   = region_areas_gt[part_id][ii]   + intersect_matrices[part_id][jj][ii];
+                    image_area += intersect_matrices[part_id](part_id,ii);
+                    region_areas_part[jj] = region_areas_part[jj] + intersect_matrices[part_id](jj,ii);
+                    region_areas_gt[part_id][ii]   = region_areas_gt[part_id][ii]   + intersect_matrices[part_id](jj,ii);
                 }
             }
         }
@@ -263,7 +260,7 @@ void ObjectsAndPartsF::calculate(const std::vector<MultiArray<uint64, 2> >& inte
             {
                 for(std::size_t jj=0; jj<num_reg_part; jj++)
                 {
-                    region_areas_gt[part_id][ii]   = region_areas_gt[part_id][ii]   + intersect_matrices[part_id][jj][ii];
+                    region_areas_gt[part_id][ii]   = region_areas_gt[part_id][ii]   + intersect_matrices[part_id](jj,ii);
                 }
             }
         }
@@ -271,13 +268,13 @@ void ObjectsAndPartsF::calculate(const std::vector<MultiArray<uint64, 2> >& inte
 
     /* Get candidates in the partition (remove percentile of small area) */
     _candidate_part.resize(num_reg_part);
-    std::multimap<float64, uint32> area_map; // Mapping between each region area and its id
+    std::multimap<double, uint32> area_map; // Mapping between each region area and its id
     for(std::size_t ii=0; ii<num_reg_part; ++ii)
     {
-        area_map.insert(std::pair<float64, uint32>(((float64)region_areas_part[ii])/((float64)image_area),ii));
+        area_map.insert(std::pair<double, uint32>(((double)region_areas_part[ii])/((double)image_area),ii));
     }
-    float64 curr_pct = 0;
-    for(std::multimap<float64, uint32>::const_reverse_iterator rit = area_map.rbegin(); rit != area_map.rend(); ++rit)
+    double curr_pct = 0;
+    for(std::multimap<double, uint32>::const_reverse_iterator rit = area_map.rbegin(); rit != area_map.rend(); ++rit)
     {
         if(curr_pct<_area_percentile)
             _candidate_part[rit->second] = 1;
@@ -295,10 +292,10 @@ void ObjectsAndPartsF::calculate(const std::vector<MultiArray<uint64, 2> >& inte
         area_map.clear();
         for(std::size_t ii=0; ii<num_reg_gt[part_id]; ++ii)
         {
-            area_map.insert(std::pair<float64, uint32>(((float64)region_areas_gt[part_id][ii])/((float64)image_area),ii));
+            area_map.insert(std::pair<double, uint32>(((double)region_areas_gt[part_id][ii])/((double)image_area),ii));
         }
         curr_pct = 0;
-        for(std::multimap<float64, uint32>::const_reverse_iterator rit = area_map.rbegin(); rit != area_map.rend(); ++rit)
+        for(std::multimap<double, uint32>::const_reverse_iterator rit = area_map.rbegin(); rit != area_map.rend(); ++rit)
         {
             if(curr_pct<_area_percentile)
                 _candidate_gt[part_id][rit->second] = 1;
@@ -318,8 +315,8 @@ void ObjectsAndPartsF::calculate(const std::vector<MultiArray<uint64, 2> >& inte
         {
             for(uint32 jj=0; jj<num_reg_part; jj++)
             {
-                float64 recall    = (float64)intersect_matrices[part_id][jj][ii]/(float64)region_areas_gt[part_id][ii];
-                float64 precision = (float64)intersect_matrices[part_id][jj][ii]/(float64)region_areas_part[jj];
+                double recall    = (double)intersect_matrices[part_id](jj,ii)/(double)region_areas_gt[part_id][ii];
+                double precision = (double)intersect_matrices[part_id](jj,ii)/(double)region_areas_part[jj];
                 
                 /* Ignore those regions with tiny area */
                 if(_candidate_gt[part_id][ii]==1 && _candidate_part[jj]==1)
@@ -380,7 +377,7 @@ void ObjectsAndPartsF::calculate(const std::vector<MultiArray<uint64, 2> >& inte
         else if (_candidate_part[jj])// Compute degree of undersegmentation
             num_underseg_part += _prec_part[jj];
     }
-    num_underseg_part = num_underseg_part/(float64)n_gts;
+    num_underseg_part = num_underseg_part/(double)n_gts;
     for(std::size_t part_id=0; part_id<n_gts; ++part_id)
     {
         for(uint32 ii=0; ii<num_reg_gt[part_id]; ii++)

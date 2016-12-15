@@ -21,9 +21,9 @@
 #include "mex.h"
         
 #include <misc/mex_helpers.hpp>        
-// #include <misc/intersection_matrix.hpp>
-// #include <measures/fop.hpp>
-// #include <measures/pri_fr.hpp>
+#include <misc/intersection_matrix.hpp>
+#include <measures/fop.hpp>
+#include <measures/pri_fr.hpp>
 // #include <measures/bgm.hpp>
 // #include <measures/voi.hpp>
 // #include <measures/bce_gce_lce.hpp>
@@ -69,82 +69,82 @@ mexFunction( int nlhs, mxArray *plhs[],
     else
         measure_id = mxArrayToString(prhs[2]);
     
-//     // Compute intersection matrices
-//     std::vector<MultiArray<uint64,2> > int_mats(n_gts);
-//     for(std::size_t ii=0; ii<n_gts; ++ii)
-//          int_mats[ii] = intersection_matrix(part, gts[ii]);;
+    // Compute intersection matrices
+    std::vector<mex_types<uint64>::eigen_type> int_mats(n_gts);
+    for(std::size_t ii=0; ii<n_gts; ++ii)
+         int_mats[ii] = intersection_matrix(part, gts[ii]);;
     
     // Vector to store output
     std::vector<double> results;
 
-//     /***********************************************/
-//     /*        Objects and Parts F-measure          */
-//     /***********************************************/
-//     if (!strcmp(measure_id.c_str(),"fop"))
-//     {
-//         float64 gamma_obj  = 0.9;
-//         float64 gamma_part = 0.25;
-//         float64 beta       = 0.1;
-//         ObjectsAndPartsF opf(gamma_obj, gamma_part, beta);
-//         opf.calculate(int_mats);
-//         results.push_back(opf.f_measure());
-//         results.push_back(opf.precision());
-//         results.push_back(opf.recall());
-//     }
-//     
-//     
-//     /*****************************************************/
-//     /* Probabilistic Rand Index (PRI): Mean of RI to GTs */
-//     /*****************************************************/
-//     if (!strcmp(measure_id.c_str(),"pri"))
-//     {
-//         double pri = 0;
-//         for(std::size_t ii=0; ii<n_gts; ++ii)
-//         {
-//             PairsOfPixels pairs;
-//             pairs.calculate(int_mats[ii]);
-//             pri += (double)pairs.rand_index();
-//         }
-//         pri /= (double)int_mats.size();
-//         results.push_back(pri);
-//     }
-//     
-//     /***********************************************/
-//     /*        Precision-recall for regions         */
-//     /***********************************************/
-//     if (!strcmp(measure_id.c_str(),"fr"))
-//     {
-//         float64 prr = 0; float64 rer = 0;
-//         for(std::size_t ii=0; ii<n_gts; ++ii)
-//         {
-//             PairsOfPixels pairs;
-//             pairs.calculate(int_mats[ii]);
-//             prr += pairs.precision();
-//             rer += pairs.recall();
-//         }
-//         prr /= (float64)n_gts;
-//         rer /= (float64)n_gts;
-//         float64 fr = 0;
-//         if (prr+rer>0)
-//             fr = 2*prr*rer/(prr+rer);
-//         else
-//             fr = 0;
-//         results.push_back(fr); 
-//         results.push_back(prr);
-//         results.push_back(rer);
-//     }    
-//     
+    /***********************************************/
+    /*        Objects and Parts F-measure          */
+    /***********************************************/
+    if (!strcmp(measure_id.c_str(),"fop"))
+    {
+        double gamma_obj  = 0.9;
+        double gamma_part = 0.25;
+        double beta       = 0.1;
+        ObjectsAndPartsF opf(gamma_obj, gamma_part, beta);
+        opf.calculate(int_mats);
+        results.push_back(opf.f_measure());
+        results.push_back(opf.precision());
+        results.push_back(opf.recall());
+    }
+    
+    
+    /*****************************************************/
+    /* Probabilistic Rand Index (PRI): Mean of RI to GTs */
+    /*****************************************************/
+    if (!strcmp(measure_id.c_str(),"pri"))
+    {
+        double pri = 0;
+        for(std::size_t ii=0; ii<n_gts; ++ii)
+        {
+            PairsOfPixels pairs;
+            pairs.calculate(int_mats[ii]);
+            pri += (double)pairs.rand_index();
+        }
+        pri /= (double)int_mats.size();
+        results.push_back(pri);
+    }
+    
+    /***********************************************/
+    /*        Precision-recall for regions         */
+    /***********************************************/
+    if (!strcmp(measure_id.c_str(),"fr"))
+    {
+        double prr = 0; double rer = 0;
+        for(std::size_t ii=0; ii<n_gts; ++ii)
+        {
+            PairsOfPixels pairs;
+            pairs.calculate(int_mats[ii]);
+            prr += pairs.precision();
+            rer += pairs.recall();
+        }
+        prr /= (double)n_gts;
+        rer /= (double)n_gts;
+        double fr = 0;
+        if (prr+rer>0)
+            fr = 2*prr*rer/(prr+rer);
+        else
+            fr = 0;
+        results.push_back(fr); 
+        results.push_back(prr);
+        results.push_back(rer);
+    }    
+    
 //     /***********************************************/
 //     /*          Variation of Information           */
 //     /***********************************************/
 //     if (!strcmp(measure_id.c_str(),"voi"))
 //     {
-//         float64 voi = 0;
+//         double voi = 0;
 //         for(std::size_t ii=0; ii<n_gts; ++ii)
 //         {
-//             voi += (float64)variation_of_information(int_mats[ii]);
+//             voi += (double)variation_of_information(int_mats[ii]);
 //         }
-//         voi /= (float64)n_gts;
+//         voi /= (double)n_gts;
 //         results.push_back(voi); 
 //     }
 //     
@@ -153,13 +153,13 @@ mexFunction( int nlhs, mxArray *plhs[],
 //     /***********************************************/
 //     if (!strcmp(measure_id.c_str(),"nvoi"))
 //     {
-//         float64 nvoi = 0;
+//         double nvoi = 0;
 //         for(std::size_t ii=0; ii<n_gts; ++ii)
 //         {
 //             uint32 num_regs_1 = int_mats[ii].dims(0);
 //             uint32 num_regs_2 = int_mats[ii].dims(1);
 // 
-//             float64 tmp = (float64)variation_of_information(int_mats[ii]);
+//             double tmp = (double)variation_of_information(int_mats[ii]);
 // 
 //             // Normalized VoI
 //             if (std::max(num_regs_1,num_regs_2)==1)
@@ -167,7 +167,7 @@ mexFunction( int nlhs, mxArray *plhs[],
 //             else
 //                 nvoi += 1-(tmp/(2*log(std::max(num_regs_1,num_regs_2))/log(2)));
 //         }
-//         nvoi /= (float64)n_gts;
+//         nvoi /= (double)n_gts;
 //         results.push_back(nvoi);
 //     }
 //     
@@ -176,12 +176,12 @@ mexFunction( int nlhs, mxArray *plhs[],
 //     /***********************************************/
 //     if (!strcmp(measure_id.c_str(),"bce"))
 //     {
-//         float64 bce = 0;
+//         double bce = 0;
 //         for(std::size_t ii=0; ii<n_gts; ++ii)
 //         {
-//             bce += (float64)bidirectional_consistency_error(int_mats[ii]);
+//             bce += (double)bidirectional_consistency_error(int_mats[ii]);
 //         }
-//         bce /= (float64)n_gts;
+//         bce /= (double)n_gts;
 //         bce = 1-bce;  // Make it a similarity measure (1->Best)
 //         results.push_back(bce); 
 //     }
@@ -191,12 +191,12 @@ mexFunction( int nlhs, mxArray *plhs[],
 //     /***********************************************/
 //     if (!strcmp(measure_id.c_str(),"gce"))
 //     {
-//         float64 gce = 0;
+//         double gce = 0;
 //         for(std::size_t ii=0; ii<n_gts; ++ii)
 //         {
-//             gce += (float64)global_consistency_error(int_mats[ii]);
+//             gce += (double)global_consistency_error(int_mats[ii]);
 //         }
-//         gce /= (float64)n_gts;
+//         gce /= (double)n_gts;
 //         gce = 1-gce;  // Make it a similarity measure (1->Best)
 //         results.push_back(gce); 
 //     }    
@@ -206,12 +206,12 @@ mexFunction( int nlhs, mxArray *plhs[],
 //     /***********************************************/
 //     if (!strcmp(measure_id.c_str(),"lce"))
 //     {
-//         float64 lce = 0;
+//         double lce = 0;
 //         for(std::size_t ii=0; ii<n_gts; ++ii)
 //         {
-//             lce += (float64)local_consistency_error(int_mats[ii]);
+//             lce += (double)local_consistency_error(int_mats[ii]);
 //         }
-//         lce /= (float64)n_gts;
+//         lce /= (double)n_gts;
 //         lce = 1-lce;  // Make it a similarity measure (1->Best)
 //         results.push_back(lce); 
 //     }   
@@ -221,12 +221,12 @@ mexFunction( int nlhs, mxArray *plhs[],
 //     /***********************************************/
 //     if (!strcmp(measure_id.c_str(),"sc"))
 //     {
-//         float64 sc = 0;
+//         double sc = 0;
 //         for(std::size_t ii=0; ii<n_gts; ++ii)
 //         {
-//             sc += (float64)segmentation_covering(int_mats[ii]);
+//             sc += (double)segmentation_covering(int_mats[ii]);
 //         }
-//         sc /= (float64)n_gts;
+//         sc /= (double)n_gts;
 //         results.push_back(sc); 
 //     }   
 //     
@@ -235,13 +235,13 @@ mexFunction( int nlhs, mxArray *plhs[],
 //     /***********************************************/
 //     if (!strcmp(measure_id.c_str(),"bgm"))
 //     {
-//         float64 bgm = 0;
+//         double bgm = 0;
 //         for(std::size_t ii=0; ii<n_gts; ++ii)
 //         {
-//             bgm += (float64)bipartite_graph_matching(part, gts[ii]);
+//             bgm += (double)bipartite_graph_matching(part, gts[ii]);
 //         }
-//         bgm /= (float64)n_gts;  // Mean over GTs
-//         bgm /= (float64)(part.dims()[0]*part.dims()[1]);  // Normalize
+//         bgm /= (double)n_gts;  // Mean over GTs
+//         bgm /= (double)(part.dims()[0]*part.dims()[1]);  // Normalize
 //         bgm = 1-bgm;  // Make it a similarity measure (1->Best)
 //         results.push_back(bgm);
 //     }
@@ -251,13 +251,13 @@ mexFunction( int nlhs, mxArray *plhs[],
 //     /***********************************************/
 //     if (!strcmp(measure_id.c_str(),"dhd"))
 //     {
-//         float64 dhd = 0;
+//         double dhd = 0;
 //         for(std::size_t ii=0; ii<n_gts; ++ii)
 //         {
-//             dhd += (float64)directional_hamming_distance(int_mats[ii]);
+//             dhd += (double)directional_hamming_distance(int_mats[ii]);
 //         }
-//         dhd /= (float64)n_gts;
-//         dhd /= (float64)(part.dims()[0]*part.dims()[1]);  // Normalize
+//         dhd /= (double)n_gts;
+//         dhd /= (double)(part.dims()[0]*part.dims()[1]);  // Normalize
 //         dhd = 1-dhd;  // Make it a similarity measure (1->Best)
 //         results.push_back(dhd); 
 //     }
@@ -267,7 +267,7 @@ mexFunction( int nlhs, mxArray *plhs[],
 //     /***********************************************/
 //     if (!strcmp(measure_id.c_str(),"ssc"))
 //     {
-//         float64 sc = 0;
+//         double sc = 0;
 //         for(std::size_t ii=0; ii<n_gts; ++ii)
 //         {
 //             /* Transpose int_mat */
@@ -276,9 +276,9 @@ mexFunction( int nlhs, mxArray *plhs[],
 //                 for(std::size_t yy=0; yy<int_mats[ii].dims()[1]; yy++)
 //                     transp_int[yy][xx] = int_mats[ii][xx][yy];
 //             
-//             sc += (float64)segmentation_covering(transp_int);
+//             sc += (double)segmentation_covering(transp_int);
 //         }
-//         sc /= (float64)n_gts;
+//         sc /= (double)n_gts;
 //         results.push_back(sc);
 //     }
 //     
@@ -287,7 +287,7 @@ mexFunction( int nlhs, mxArray *plhs[],
 //     /***********************************************/
 //     if (!strcmp(measure_id.c_str(),"sdhd"))
 //     {
-//         float64 dhd = 0;
+//         double dhd = 0;
 //         for(std::size_t ii=0; ii<n_gts; ++ii)
 //         {
 //             /* Transpose int_mat */
@@ -296,10 +296,10 @@ mexFunction( int nlhs, mxArray *plhs[],
 //                 for(std::size_t yy=0; yy<int_mats[ii].dims()[1]; yy++)
 //                     transp_int[yy][xx] = int_mats[ii][xx][yy];
 //             
-//             dhd += (float64)directional_hamming_distance(transp_int);
+//             dhd += (double)directional_hamming_distance(transp_int);
 //         }
-//         dhd /= (float64)n_gts;
-//         dhd /= (float64)(part.dims()[0]*part.dims()[1]);  // Normalize
+//         dhd /= (double)n_gts;
+//         dhd /= (double)(part.dims()[0]*part.dims()[1]);  // Normalize
 //         dhd = 1-dhd;  // Make it a similarity measure (1->Best)
 //         results.push_back(dhd); 
 //     }

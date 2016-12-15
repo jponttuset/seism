@@ -16,7 +16,7 @@ measures = {%
         
 % Check perfect case
 for ii=1:length(measures)
-    res = eval_segm([1 1; 1 1], [1 1; 1 1],measures{ii});
+    res = eval_segm([1 1 1; 1 1 1], [1 1 1; 1 1 1],measures{ii});
     disp([measures{ii} ': ' num2str(res)])
 end
 
