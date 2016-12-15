@@ -27,7 +27,7 @@
 // #include <measures/bgm.hpp>
 #include <measures/voi.hpp>
 #include <measures/bce_gce_lce.hpp>
-// #include <measures/sc.hpp>
+#include <measures/sc.hpp>
 // #include <measures/dhd.hpp>
 
 typedef unsigned int uint32;
@@ -216,20 +216,20 @@ mexFunction( int nlhs, mxArray *plhs[],
         results.push_back(lce); 
     }   
     
-//     /***********************************************/
-//     /*          Segmentation Covering              */
-//     /***********************************************/
-//     if (!strcmp(measure_id.c_str(),"sc"))
-//     {
-//         double sc = 0;
-//         for(std::size_t ii=0; ii<n_gts; ++ii)
-//         {
-//             sc += (double)segmentation_covering(int_mats[ii]);
-//         }
-//         sc /= (double)n_gts;
-//         results.push_back(sc); 
-//     }   
-//     
+    /***********************************************/
+    /*          Segmentation Covering              */
+    /***********************************************/
+    if (!strcmp(measure_id.c_str(),"sc"))
+    {
+        double sc = 0;
+        for(std::size_t ii=0; ii<n_gts; ++ii)
+        {
+            sc += (double)segmentation_covering(int_mats[ii]);
+        }
+        sc /= (double)n_gts;
+        results.push_back(sc); 
+    }   
+    
 //     /***********************************************/
 //     /*       Bipartite Graph Matching (BGM)        */
 //     /***********************************************/
