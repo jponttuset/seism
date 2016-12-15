@@ -17,12 +17,9 @@
 #ifndef IMAGEPLUS_INTERSECTION_MATRIX_HPP
 #define IMAGEPLUS_INTERSECTION_MATRIX_HPP
 
-#include <misc/types.hpp>
-#include <misc/matlab_multiarray.hpp>
-#include <misc/multiarray.hpp>
-
 #include <set>
 #include <list>
+#include <misc/mex_helpers.hpp>
 
 /*! It relabels a partition in scanning order. Bimaps are the look up tables of the relabeling.
  * 
