@@ -25,8 +25,8 @@
 #include <measures/fop.hpp>
 #include <measures/pri_fr.hpp>
 // #include <measures/bgm.hpp>
-// #include <measures/voi.hpp>
-// #include <measures/bce_gce_lce.hpp>
+#include <measures/voi.hpp>
+#include <measures/bce_gce_lce.hpp>
 // #include <measures/sc.hpp>
 // #include <measures/dhd.hpp>
 
@@ -134,88 +134,88 @@ mexFunction( int nlhs, mxArray *plhs[],
         results.push_back(rer);
     }    
     
-//     /***********************************************/
-//     /*          Variation of Information           */
-//     /***********************************************/
-//     if (!strcmp(measure_id.c_str(),"voi"))
-//     {
-//         double voi = 0;
-//         for(std::size_t ii=0; ii<n_gts; ++ii)
-//         {
-//             voi += (double)variation_of_information(int_mats[ii]);
-//         }
-//         voi /= (double)n_gts;
-//         results.push_back(voi); 
-//     }
-//     
-//     /***********************************************/
-//     /*    Normalized Variation of Information      */
-//     /***********************************************/
-//     if (!strcmp(measure_id.c_str(),"nvoi"))
-//     {
-//         double nvoi = 0;
-//         for(std::size_t ii=0; ii<n_gts; ++ii)
-//         {
-//             uint32 num_regs_1 = int_mats[ii].dims(0);
-//             uint32 num_regs_2 = int_mats[ii].dims(1);
-// 
-//             double tmp = (double)variation_of_information(int_mats[ii]);
-// 
-//             // Normalized VoI
-//             if (std::max(num_regs_1,num_regs_2)==1)
-//                 nvoi += 1;
-//             else
-//                 nvoi += 1-(tmp/(2*log(std::max(num_regs_1,num_regs_2))/log(2)));
-//         }
-//         nvoi /= (double)n_gts;
-//         results.push_back(nvoi);
-//     }
-//     
-//     /***********************************************/
-//     /*       Bidirectional Consistency Error       */
-//     /***********************************************/
-//     if (!strcmp(measure_id.c_str(),"bce"))
-//     {
-//         double bce = 0;
-//         for(std::size_t ii=0; ii<n_gts; ++ii)
-//         {
-//             bce += (double)bidirectional_consistency_error(int_mats[ii]);
-//         }
-//         bce /= (double)n_gts;
-//         bce = 1-bce;  // Make it a similarity measure (1->Best)
-//         results.push_back(bce); 
-//     }
-//     
-//     /***********************************************/
-//     /*         Global Consistency Error            */
-//     /***********************************************/
-//     if (!strcmp(measure_id.c_str(),"gce"))
-//     {
-//         double gce = 0;
-//         for(std::size_t ii=0; ii<n_gts; ++ii)
-//         {
-//             gce += (double)global_consistency_error(int_mats[ii]);
-//         }
-//         gce /= (double)n_gts;
-//         gce = 1-gce;  // Make it a similarity measure (1->Best)
-//         results.push_back(gce); 
-//     }    
-//     
-//     /***********************************************/
-//     /*         Local Consistency Error             */
-//     /***********************************************/
-//     if (!strcmp(measure_id.c_str(),"lce"))
-//     {
-//         double lce = 0;
-//         for(std::size_t ii=0; ii<n_gts; ++ii)
-//         {
-//             lce += (double)local_consistency_error(int_mats[ii]);
-//         }
-//         lce /= (double)n_gts;
-//         lce = 1-lce;  // Make it a similarity measure (1->Best)
-//         results.push_back(lce); 
-//     }   
-//     
+    /***********************************************/
+    /*          Variation of Information           */
+    /***********************************************/
+    if (!strcmp(measure_id.c_str(),"voi"))
+    {
+        double voi = 0;
+        for(std::size_t ii=0; ii<n_gts; ++ii)
+        {
+            voi += (double)variation_of_information(int_mats[ii]);
+        }
+        voi /= (double)n_gts;
+        results.push_back(voi); 
+    }
+    
+    /***********************************************/
+    /*    Normalized Variation of Information      */
+    /***********************************************/
+    if (!strcmp(measure_id.c_str(),"nvoi"))
+    {
+        double nvoi = 0;
+        for(std::size_t ii=0; ii<n_gts; ++ii)
+        {
+            uint32 num_regs_1 = int_mats[ii].cols();
+            uint32 num_regs_2 = int_mats[ii].rows();
+
+            double tmp = (double)variation_of_information(int_mats[ii]);
+
+            // Normalized VoI
+            if (std::max(num_regs_1,num_regs_2)==1)
+                nvoi += 1;
+            else
+                nvoi += 1-(tmp/(2*log((double)std::max(num_regs_1,num_regs_2))/log(2.)));
+        }
+        nvoi /= (double)n_gts;
+        results.push_back(nvoi);
+    }
+    
+    /***********************************************/
+    /*       Bidirectional Consistency Error       */
+    /***********************************************/
+    if (!strcmp(measure_id.c_str(),"bce"))
+    {
+        double bce = 0;
+        for(std::size_t ii=0; ii<n_gts; ++ii)
+        {
+            bce += (double)bidirectional_consistency_error(int_mats[ii]);
+        }
+        bce /= (double)n_gts;
+        bce = 1-bce;  // Make it a similarity measure (1->Best)
+        results.push_back(bce); 
+    }
+    
+    /***********************************************/
+    /*         Global Consistency Error            */
+    /***********************************************/
+    if (!strcmp(measure_id.c_str(),"gce"))
+    {
+        double gce = 0;
+        for(std::size_t ii=0; ii<n_gts; ++ii)
+        {
+            gce += (double)global_consistency_error(int_mats[ii]);
+        }
+        gce /= (double)n_gts;
+        gce = 1-gce;  // Make it a similarity measure (1->Best)
+        results.push_back(gce); 
+    }    
+    
+    /***********************************************/
+    /*         Local Consistency Error             */
+    /***********************************************/
+    if (!strcmp(measure_id.c_str(),"lce"))
+    {
+        double lce = 0;
+        for(std::size_t ii=0; ii<n_gts; ++ii)
+        {
+            lce += (double)local_consistency_error(int_mats[ii]);
+        }
+        lce /= (double)n_gts;
+        lce = 1-lce;  // Make it a similarity measure (1->Best)
+        results.push_back(lce); 
+    }   
+    
 //     /***********************************************/
 //     /*          Segmentation Covering              */
 //     /***********************************************/

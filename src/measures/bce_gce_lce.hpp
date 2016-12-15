@@ -17,7 +17,8 @@
 #ifndef IMAGEPLUS_BCE_GCE_LCE_HPP
 #define IMAGEPLUS_BCE_GCE_LCE_HPP
 
-#include <misc/multiarray.hpp>
+#include <misc/mex_helpers.hpp>
+#include <misc/intersection_matrix.hpp>
 
 //! It computes the Bidirectional Consistency Error (BCE) between two image partitions. 
 //!
@@ -26,40 +27,40 @@
 //!    Intl. Conf. Computer Vision, II:416-423, July 2001.
 //!
 //! \author Jordi Pont Tuset <jordi.pont@upc.edu>
-float64 bidirectional_consistency_error(const MultiArray<uint64,2>& intersect_matrix)
+double bidirectional_consistency_error(const inters_type& intersect_matrix)
 {
-    uint32 num_reg_1 = intersect_matrix.dims()[0];
-    uint32 num_reg_2 = intersect_matrix.dims()[1];
+    uint32 num_reg_1 = intersect_matrix.cols();
+    uint32 num_reg_2 = intersect_matrix.rows();
 
-    MultiArray<uint64,1> sum_row(num_reg_1);
-    MultiArray<uint64,1> sum_col(num_reg_2);
+    std::vector<uint64> sum_row(num_reg_1,0);
+    std::vector<uint64> sum_col(num_reg_2,0);
     uint64 image_area = 0;
     for(std::size_t jj = 0; jj < num_reg_2; jj++)
     {
         for(std::size_t ii = 0; ii < num_reg_1; ii++)
         {
-            image_area += intersect_matrix[ii][jj];
-            sum_row[ii] = sum_row[ii] +  intersect_matrix[ii][jj];
-            sum_col[jj] = sum_col[jj] +  intersect_matrix[ii][jj];
+            image_area += intersect_matrix(ii,jj);
+            sum_row[ii] = sum_row[ii] +  intersect_matrix(ii,jj);
+            sum_col[jj] = sum_col[jj] +  intersect_matrix(ii,jj);
         }
     }
 
-    float64 bce = 0.0;
+    double bce = 0.0;
 
     for(std::size_t jj = 0; jj < num_reg_2; jj++)
     {
         for(std::size_t ii = 0; ii < num_reg_1; ii++)
         {
-            uint64 edge = intersect_matrix[ii][jj];
+            uint64 edge = intersect_matrix(ii,jj);
             if(!edge)
                 continue;
 
-            bce += std::max((float64)(sum_row[ii] - edge)/(float64)sum_row[ii],
-                            (float64)(sum_col[jj] - edge)/(float64)sum_col[jj])*edge;
+            bce += std::max((double)(sum_row[ii] - edge)/(double)sum_row[ii],
+                            (double)(sum_col[jj] - edge)/(double)sum_col[jj])*edge;
         }
     }
 
-    return bce / (float64)image_area;
+    return bce / (double)image_area;
 }
 
 
@@ -70,42 +71,42 @@ float64 bidirectional_consistency_error(const MultiArray<uint64,2>& intersect_ma
 //!    Intl. Conf. Computer Vision, II:416-423, July 2001.
 //!
 //! \author Jordi Pont Tuset <jordi.pont@upc.edu>
-float64 global_consistency_error(const MultiArray<uint64,2>& intersect_matrix)
+double global_consistency_error(const inters_type& intersect_matrix)
 {
-    uint32 num_reg_1 = intersect_matrix.dims()[0];
-    uint32 num_reg_2 = intersect_matrix.dims()[1];
+    uint32 num_reg_1 = intersect_matrix.cols();
+    uint32 num_reg_2 = intersect_matrix.rows();
 
-    MultiArray<uint64,1> sum_row(num_reg_2);
-    MultiArray<uint64,1> sum_col(num_reg_1);    
-
+    std::vector<uint64> sum_row(num_reg_2,0);
+    std::vector<uint64> sum_col(num_reg_1,0);
+   
     uint64 image_area = 0;
     for(std::size_t jj = 0; jj < num_reg_2; jj++)
     {
         for(std::size_t ii = 0; ii < num_reg_1; ii++)
         {
-            image_area += intersect_matrix[ii][jj];
-            sum_row[jj] = sum_row[jj] +  intersect_matrix[ii][jj];
-            sum_col[ii] = sum_col[ii] +  intersect_matrix[ii][jj];
+            image_area += intersect_matrix(ii,jj);
+            sum_row[jj] = sum_row[jj] +  intersect_matrix(ii,jj);
+            sum_col[ii] = sum_col[ii] +  intersect_matrix(ii,jj);
         }
     }
 
-    float64 gce1 = 0.0;
-    float64 gce2 = 0.0;
+    double gce1 = 0.0;
+    double gce2 = 0.0;
 
     for(std::size_t jj = 0; jj < num_reg_2; jj++)
     {
         for(std::size_t ii = 0; ii < num_reg_1; ii++)
         {
-            uint64 edge = intersect_matrix[ii][jj];
+            uint64 edge = intersect_matrix(ii,jj);
             if(!edge)
                 continue;
 
-            gce1 += (float64)(sum_row[jj] - edge)*edge/(float64)sum_row[jj];
-            gce2 += (float64)(sum_col[ii] - edge)*edge/(float64)sum_col[ii];
+            gce1 += (double)(sum_row[jj] - edge)*edge/(double)sum_row[jj];
+            gce2 += (double)(sum_col[ii] - edge)*edge/(double)sum_col[ii];
         }
     }
 
-    return std::min(gce1, gce2) / (float64)(image_area);
+    return std::min(gce1, gce2) / (double)(image_area);
 }
 
 
@@ -116,40 +117,40 @@ float64 global_consistency_error(const MultiArray<uint64,2>& intersect_matrix)
 //!    Intl. Conf. Computer Vision, II:416-423, July 2001.
 //!
 //! \author Jordi Pont Tuset <jordi.pont@upc.edu>
-float64 local_consistency_error(const MultiArray<uint64,2>& intersect_matrix)
+double local_consistency_error(const inters_type& intersect_matrix)
 {
-    uint32 num_reg_1 = intersect_matrix.dims()[0];
-    uint32 num_reg_2 = intersect_matrix.dims()[1];
+    uint32 num_reg_1 = intersect_matrix.cols();
+    uint32 num_reg_2 = intersect_matrix.rows();
 
-    MultiArray<uint64,1> sum_row(num_reg_2);
-    MultiArray<uint64,1> sum_col(num_reg_1);    
+    std::vector<uint64> sum_row(num_reg_2,0);
+    std::vector<uint64> sum_col(num_reg_1,0);   
     uint64 image_area=0;
     for(std::size_t jj = 0; jj < num_reg_2; jj++)
     {
         for(std::size_t ii = 0; ii < num_reg_1; ii++)
         {
-            image_area += intersect_matrix[ii][jj];
-            sum_row[jj] = sum_row[jj] +  intersect_matrix[ii][jj];
-            sum_col[ii] = sum_col[ii] +  intersect_matrix[ii][jj];
+            image_area += intersect_matrix(ii,jj);
+            sum_row[jj] = sum_row[jj] +  intersect_matrix(ii,jj);
+            sum_col[ii] = sum_col[ii] +  intersect_matrix(ii,jj);
         }
     }
 
-    float64 lce = 0.0;
+    double lce = 0.0;
 
     for(std::size_t jj = 0; jj < num_reg_2; jj++)
     {
         for(std::size_t ii = 0; ii < num_reg_1; ii++)
         {
-            uint64 edge = intersect_matrix[ii][jj];
+            uint64 edge = intersect_matrix(ii,jj);
             if(!edge)
                 continue;
 
-            lce += std::min((float64)(sum_row[jj] - edge)*edge/(float64)sum_row[jj],
-                            (float64)(sum_col[ii] - edge)*edge/(float64)sum_col[ii]);
+            lce += std::min((double)(sum_row[jj] - edge)*edge/(double)sum_row[jj],
+                            (double)(sum_col[ii] - edge)*edge/(double)sum_col[ii]);
         }
     }
 
-    return lce / (float64)image_area;
+    return lce / (double)image_area;
 }
 
 
