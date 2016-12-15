@@ -34,6 +34,7 @@ include{3} = fullfile(seism_root, 'src'); % for Eigen
 % build_file{2} = fullfile(seism_root, 'src', 'io', 'prl', 'mex_prl_write.cpp');
 build_file{1} = fullfile(seism_root, 'src', 'measures', 'mex_eval_segm.cpp');
 
+% build_file{1} = fullfile(seism_root, 'src', 'tests', 'mex_test_int_matrix.cpp');
 
 %% %% Build everything
 if ~exist(fullfile(seism_root, 'lib'),'dir')

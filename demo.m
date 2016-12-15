@@ -14,7 +14,7 @@
 %    Computer Vision and Pattern Recognition (CVPR), 2013.
 % If you use this code, please consider citing the paper.
 % ------------------------------------------------------------------------ 
-%
+%te
 % Simple demo of how to use the package.
 % For a realistic use, see "pr_curves.m".
 %
@@ -38,9 +38,10 @@ measures = {%
             };
         
 % Compare a ground truth partition against the others
-gt_seg = db_gt('BSDS500','120003');
-partition = gt_seg{1};
-gt        = gt_seg(2:3);
+% gt_seg = db_gt('BSDS500','120003');
+% partition = gt_seg{1};
+% gt        = gt_seg(2:3);
+load('demo.mat')
 
 % Compute all available measures
 home

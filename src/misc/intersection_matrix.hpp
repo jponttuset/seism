@@ -37,11 +37,11 @@ typedef std::map<uint32,uint32> part_bimap;
  */
 uint32 relabel(const part_type& partition_in, part_type& partition_out, part_bimap& bimap)
 {
-    mxAssert(partition_out.cols==partition_in.cols(), "relabel: The x sizes of the partitions are not equal");
-    mxAssert(partition_out.rows==partition_in.rows(), "relabel: The y sizes of the partitions are not equal");
+    mxAssert(partition_out.cols()==partition_in.cols(), "relabel: The x sizes of the partitions are not equal");
+    mxAssert(partition_out.rows()==partition_in.rows(), "relabel: The y sizes of the partitions are not equal");
      
-    std::size_t size_x = partition_in.cols();
-    std::size_t size_y = partition_in.rows();
+    std::size_t size_x = partition_in.rows();
+    std::size_t size_y = partition_in.cols();
     
     uint32 max_region = 0;
     
@@ -53,7 +53,7 @@ uint32 relabel(const part_type& partition_in, part_type& partition_out, part_bim
             
             if(it == bimap.end())
             {
-                bimap.insert(part_bimap::value_type(partition_in(ii,jj), max_region) );
+                bimap[partition_in(ii,jj)] = max_region;
                 partition_out(ii,jj) = max_region;
                 max_region++;
             }
@@ -91,11 +91,11 @@ uint32 relabel(const part_type& partition_in, part_type& partition_out)
  */
 inters_type intersection_matrix(const part_type& partition1, const part_type& partition2, part_bimap& bimap1, part_bimap& bimap2)
 {
-    uint64 s_x = partition1.cols();
-    uint64 s_y = partition1.rows();
+    uint64 s_x = partition1.rows();
+    uint64 s_y = partition1.cols();
 
-    mxAssert(s_x==partition2.cols(), "intersection_matrix: The X size must be the same for both partitions");
-    mxAssert(s_y==partition2.rows(), "intersection_matrix: The Y size must be the same for both partitions");
+    mxAssert(s_x==partition2.rows(), "intersection_matrix: The X size must be the same for both partitions");
+    mxAssert(s_y==partition2.cols(), "intersection_matrix: The Y size must be the same for both partitions");
 
     part_type partition1_relab(s_x,s_y);
     part_type partition2_relab(s_x,s_y);
@@ -105,7 +105,7 @@ inters_type intersection_matrix(const part_type& partition1, const part_type& pa
 
     // "coincidence[i][j]" is a matrix that stores the number of intersecting pixels between region "i"
     // from the reference partition and region "j" from the fine partition
-    inters_type inter_matrix(num_reg_1,num_reg_2);
+    inters_type inter_matrix = inters_type::Zero(num_reg_1,num_reg_2);
     for(uint64 jj = 0; jj < s_y; ++jj)
     {
         for(uint64 ii = 0; ii < s_x; ++ii)
