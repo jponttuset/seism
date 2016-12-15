@@ -17,9 +17,8 @@
 #ifndef IMAGEPLUS_BGM_HPP
 #define IMAGEPLUS_BGM_HPP
 
-#include <misc/multiarray.hpp>
+#include <misc/mex_helpers.hpp>
 #include <misc/hungarian.hpp>
-
 
 //! It computes the Bipartite Graph Matching between two image partitions.
 //! It corresponds to the minimum number of pixels that have to be ignored from both partitions for
@@ -32,33 +31,32 @@
 //!   IEEE Transactions on Image Processing 14 (2005) 1773-1782.
 //!
 //! \author Jordi Pont Tuset <jordi.pont@upc.edu>
-uint64 bipartite_graph_matching(const MultiArray<uint32,2>& partition1, const MultiArray<uint32,2>& partition2)
+uint64 bipartite_graph_matching(const part_type& partition1, const part_type& partition2)
 {
-    uint64 s_x = partition1.dims()[0];
-    uint64 s_y = partition1.dims()[1];
+    uint64 s_x = partition1.cols();
+    uint64 s_y = partition1.rows();
 
-    mxAssert(s_x==partition2.dims()[0], "intersection_matrix: The X size must be the same for both partitions");
-    mxAssert(s_y==partition2.dims()[1], "intersection_matrix: The Y size must be the same for both partitions");
+    mxAssert(s_x==partition2.cols(), "intersection_matrix: The X size must be the same for both partitions");
+    mxAssert(s_y==partition2.rows(), "intersection_matrix: The Y size must be the same for both partitions");
 
-    MultiArray<uint32,2> partition1_relab(boost::extents[s_x][s_y]);
-    MultiArray<uint32,2> partition2_relab(boost::extents[s_x][s_y]);
+    part_type partition1_relab(s_x,s_y);
+    part_type partition2_relab(s_x,s_y);
 
-    uint32 num_reg_1   = relabel(partition1, partition1_relab);
-    uint32 num_reg_2   = relabel(partition2, partition2_relab);
+    uint32 num_reg_1 = relabel(partition1, partition1_relab);
+    uint32 num_reg_2 = relabel(partition2, partition2_relab);
     uint32 num_reg_max = std::max(num_reg_1, num_reg_2);
 
-    // "cost[ii][jj]" is a matrix that stores the (negative of the) number of intersecting pixels between region "i"
+    // "cost(ii,jj)" is a matrix that stores the (negative of the) number of intersecting pixels between region "i"
     // from partition1 and region "j" from partition2
-    MultiArray<float32,2> cost(num_reg_max,num_reg_max);
-    cost = 0;
+    mex_types<float>::eigen_type cost = mex_types<float>::eigen_type::Zero(num_reg_max,num_reg_max);
     for(uint64 jj = 0; jj < s_y; ++jj)
     {
         for(uint64 ii = 0; ii < s_x; ++ii)
         {
-            cost[partition1_relab[ii][jj]][partition2_relab[ii][jj]] -= 1;
+            cost(partition1_relab(ii,jj),partition2_relab(ii,jj)) -= 1;
         }
     }
-    return (uint64)((int64)s_x*s_y + (int64)hungarian(cost));
+    return (uint64)((long long)s_x*s_y + (long long)hungarian(cost));
 }
 
 #endif

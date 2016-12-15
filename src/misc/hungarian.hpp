@@ -67,26 +67,26 @@
 //! \param[out] rowsol: Column assigned to row in solution
 //! \param[out] colsol: Row assigned to column in solution
 //! \return The total cost of the assignment
-float32 hungarian(const MultiArray<float32,2>& costs, std::vector<int32>& rowsol, std::vector<int32>& colsol)
+float hungarian(const mex_types<float>::eigen_type& costs, std::vector<int>& rowsol, std::vector<int>& colsol)
 {
-    int32 dim = costs.dims(0);
-    ASSERT(dim == (int32)costs.dims(1), "hungarian: Costs must be a square matrix");
+    int dim = costs.cols();
+    mxAssert(dim == (int)costs.rows(), "hungarian: Costs must be a square matrix");
 
-    float32 big = std::numeric_limits<float32>::max();
+    float big = std::numeric_limits<float>::max();
     bool unassignedfound;
-    int32  i, imin, numfree = 0, prvnumfree, f, i0, k, freerow;
-    int32  j, j1, j2=0, endofpath=0, last=0, low, up;
-    float32 min=0, h, umin, usubmin, v2;
+    int  i, imin, numfree = 0, prvnumfree, f, i0, k, freerow;
+    int  j, j1, j2=0, endofpath=0, last=0, low, up;
+    float min=0, h, umin, usubmin, v2;
 
     rowsol.resize(dim);
     colsol.resize(dim);
 
-    std::vector<int32>    free(dim);    // list of unassigned rows.
-    std::vector<int32> collist(dim);    // list of columns to be scanned in various ways.
-    std::vector<int32> matches(dim);    // counts how many times a row could be assigned.
-    std::vector<float32>    d(dim);    // 'cost-distance' in augmenting path calculation.
-    std::vector<int32>    pred(dim);    // row-predecessor of column in augmenting/alternating path.
-    std::vector<float32>    v(dim);
+    std::vector<int>    free(dim);    // list of unassigned rows.
+    std::vector<int> collist(dim);    // list of columns to be scanned in various ways.
+    std::vector<int> matches(dim);    // counts how many times a row could be assigned.
+    std::vector<float>    d(dim);    // 'cost-distance' in augmenting path calculation.
+    std::vector<int>    pred(dim);    // row-predecessor of column in augmenting/alternating path.
+    std::vector<float>    v(dim);
 
     // init how many times a row will be assigned in the column reduction.
     for (i = 0; i < dim; i++)
@@ -98,12 +98,12 @@ float32 hungarian(const MultiArray<float32,2>& costs, std::vector<int32>& rowsol
     for (j = dim-1; j >= 0; j--)    // reverse order gives better results.
     {
         // find minimum cost over rows.
-        min = costs[0][j];
+        min = costs(0,j);
         imin = 0;
         for (i = 1; i < dim; i++)
-        {    if (costs[i][j] < min)
+        {    if (costs(i,j) < min)
             {
-                min = costs[i][j];
+                min = costs(i,j);
                 imin = i;
             }
         }
@@ -134,8 +134,8 @@ float32 hungarian(const MultiArray<float32,2>& costs, std::vector<int32>& rowsol
                 min = big;
                 for (j = 0; j < dim; j++)
                     if (j != j1)
-                        if (costs[i][j] - v[j] < min)
-                            min = costs[i][j] - v[j];
+                        if (costs(i,j) - v[j] < min)
+                            min = costs(i,j) - v[j];
                 v[j1] = v[j1] - min;
             }
         }
@@ -158,12 +158,12 @@ float32 hungarian(const MultiArray<float32,2>& costs, std::vector<int32>& rowsol
             k++;
 
             // find minimum and second minimum reduced cost over columns.
-            umin = costs[i][0] - v[0];
+            umin = costs(i,0) - v[0];
             j1 = 0;
             usubmin = big;
             for (j = 1; j < dim; j++)
             {
-                h = costs[i][j] - v[j];
+                h = costs(i,j) - v[j];
                 if (h < usubmin)
                 {
                     if (h >= umin)
@@ -237,7 +237,7 @@ float32 hungarian(const MultiArray<float32,2>& costs, std::vector<int32>& rowsol
         // runs until unassigned column added to shortest path tree.
         for (j = 0; j < dim; j++)
         {
-            d[j] = costs[freerow][j] - v[j];
+            d[j] = costs(freerow,j) - v[j];
             pred[j] = freerow;
             collist[j] = j;        // init column list.
         }
@@ -292,12 +292,12 @@ float32 hungarian(const MultiArray<float32,2>& costs, std::vector<int32>& rowsol
                 j1 = collist[low];
                 low++;
                 i = colsol[j1];
-                h = costs[i][j1] - v[j1] - min;
+                h = costs(i,j1) - v[j1] - min;
 
                 for (k = up; k < dim; k++)
                 {
                     j = collist[k];
-                    v2 = costs[i][j] - v[j] - h;
+                    v2 = costs(i,j) - v[j] - h;
                     if (v2 < d[j])
                     {
                         pred[j] = i;
@@ -344,11 +344,11 @@ float32 hungarian(const MultiArray<float32,2>& costs, std::vector<int32>& rowsol
     }
 
     // calculate optimal cost.
-    float32 lapcost = 0;
+    float lapcost = 0;
     for (i = 0; i < dim; i++)
     {
         j = rowsol[i];
-        lapcost = lapcost + costs[i][j];
+        lapcost = lapcost + costs(i,j);
     }
 
     return lapcost;
@@ -375,10 +375,10 @@ float32 hungarian(const MultiArray<float32,2>& costs, std::vector<int32>& rowsol
 //!
 //! \param[in]   costs: Cost matrix (position (i,j) is the weight of the edge between worker i and job j)
 //! \return The total cost of the assignment
-float32 hungarian(const MultiArray<float32,2>& costs)
+float hungarian(const mex_types<float>::eigen_type& costs)
 {
-    std::vector<int32> row;
-    std::vector<int32> col;
+    std::vector<int> row;
+    std::vector<int> col;
     return hungarian(costs, row, col);
 }
 

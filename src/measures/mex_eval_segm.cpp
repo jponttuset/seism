@@ -24,7 +24,7 @@
 #include <misc/intersection_matrix.hpp>
 #include <measures/fop.hpp>
 #include <measures/pri_fr.hpp>
-// #include <measures/bgm.hpp>
+#include <measures/bgm.hpp>
 #include <measures/voi.hpp>
 #include <measures/bce_gce_lce.hpp>
 #include <measures/sc.hpp>
@@ -230,22 +230,22 @@ mexFunction( int nlhs, mxArray *plhs[],
         results.push_back(sc); 
     }   
     
-//     /***********************************************/
-//     /*       Bipartite Graph Matching (BGM)        */
-//     /***********************************************/
-//     if (!strcmp(measure_id.c_str(),"bgm"))
-//     {
-//         double bgm = 0;
-//         for(std::size_t ii=0; ii<n_gts; ++ii)
-//         {
-//             bgm += (double)bipartite_graph_matching(part, gts[ii]);
-//         }
-//         bgm /= (double)n_gts;  // Mean over GTs
-//         bgm /= (double)(part.dims()[0]*part.dims()[1]);  // Normalize
-//         bgm = 1-bgm;  // Make it a similarity measure (1->Best)
-//         results.push_back(bgm);
-//     }
-//     
+    /***********************************************/
+    /*       Bipartite Graph Matching (BGM)        */
+    /***********************************************/
+    if (!strcmp(measure_id.c_str(),"bgm"))
+    {
+        double bgm = 0;
+        for(std::size_t ii=0; ii<n_gts; ++ii)
+        {
+            bgm += (double)bipartite_graph_matching(part, gts[ii]);
+        }
+        bgm /= (double)n_gts;  // Mean over GTs
+        bgm /= (double)(part.cols()*part.rows());  // Normalize
+        bgm = 1-bgm;  // Make it a similarity measure (1->Best)
+        results.push_back(bgm);
+    }
+    
 //     /***********************************************/
 //     /*    Directional Hamming Distance (DHD)       */
 //     /***********************************************/
@@ -257,7 +257,7 @@ mexFunction( int nlhs, mxArray *plhs[],
 //             dhd += (double)directional_hamming_distance(int_mats[ii]);
 //         }
 //         dhd /= (double)n_gts;
-//         dhd /= (double)(part.dims()[0]*part.dims()[1]);  // Normalize
+//         dhd /= (double)(part.cols()*part.rows());  // Normalize
 //         dhd = 1-dhd;  // Make it a similarity measure (1->Best)
 //         results.push_back(dhd); 
 //     }
@@ -271,9 +271,9 @@ mexFunction( int nlhs, mxArray *plhs[],
 //         for(std::size_t ii=0; ii<n_gts; ++ii)
 //         {
 //             /* Transpose int_mat */
-//             MultiArray<uint64,2> transp_int(int_mats[ii].dims()[1],int_mats[ii].dims()[0]);
-//             for(std::size_t xx=0; xx<int_mats[ii].dims()[0]; xx++)
-//                 for(std::size_t yy=0; yy<int_mats[ii].dims()[1]; yy++)
+//             MultiArray<uint64,2> transp_int(int_mats[ii].rows(),int_mats[ii].cols());
+//             for(std::size_t xx=0; xx<int_mats[ii].cols(); xx++)
+//                 for(std::size_t yy=0; yy<int_mats[ii].rows(); yy++)
 //                     transp_int[yy][xx] = int_mats[ii][xx][yy];
 //             
 //             sc += (double)segmentation_covering(transp_int);
@@ -291,15 +291,15 @@ mexFunction( int nlhs, mxArray *plhs[],
 //         for(std::size_t ii=0; ii<n_gts; ++ii)
 //         {
 //             /* Transpose int_mat */
-//             MultiArray<uint64,2> transp_int(int_mats[ii].dims()[1],int_mats[ii].dims()[0]);
-//             for(std::size_t xx=0; xx<int_mats[ii].dims()[0]; xx++)
-//                 for(std::size_t yy=0; yy<int_mats[ii].dims()[1]; yy++)
+//             MultiArray<uint64,2> transp_int(int_mats[ii].rows(),int_mats[ii].cols());
+//             for(std::size_t xx=0; xx<int_mats[ii].cols(); xx++)
+//                 for(std::size_t yy=0; yy<int_mats[ii].rows(); yy++)
 //                     transp_int[yy][xx] = int_mats[ii][xx][yy];
 //             
 //             dhd += (double)directional_hamming_distance(transp_int);
 //         }
 //         dhd /= (double)n_gts;
-//         dhd /= (double)(part.dims()[0]*part.dims()[1]);  // Normalize
+//         dhd /= (double)(part.cols()*part.rows());  // Normalize
 //         dhd = 1-dhd;  // Make it a similarity measure (1->Best)
 //         results.push_back(dhd); 
 //     }
