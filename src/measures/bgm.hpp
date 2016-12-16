@@ -33,11 +33,11 @@
 //! \author Jordi Pont Tuset <jordi.pont@upc.edu>
 uint64 bipartite_graph_matching(const part_type& partition1, const part_type& partition2)
 {
-    uint64 s_x = partition1.cols();
-    uint64 s_y = partition1.rows();
+    uint64 s_x = partition1.rows();
+    uint64 s_y = partition1.cols();
 
-    mxAssert(s_x==partition2.cols(), "intersection_matrix: The X size must be the same for both partitions");
-    mxAssert(s_y==partition2.rows(), "intersection_matrix: The Y size must be the same for both partitions");
+    mxAssert(s_x==partition2.rows(), "intersection_matrix: The X size must be the same for both partitions");
+    mxAssert(s_y==partition2.cols(), "intersection_matrix: The Y size must be the same for both partitions");
 
     part_type partition1_relab(s_x,s_y);
     part_type partition2_relab(s_x,s_y);

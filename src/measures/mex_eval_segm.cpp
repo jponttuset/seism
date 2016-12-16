@@ -72,17 +72,8 @@ mexFunction( int nlhs, mxArray *plhs[],
     // Compute intersection matrices
     std::vector<mex_types<uint64>::eigen_type> int_mats(n_gts);
     for(std::size_t ii=0; ii<n_gts; ++ii)
-    {
         int_mats[ii] = intersection_matrix(part, gts[ii]);;
-        for(std::size_t xx=0; xx<int_mats[ii].rows(); ++xx)
-        {
-            for(std::size_t yy=0; yy<int_mats[ii].cols(); ++yy)
-            {
-                mexPrintf("%d\t",int_mats[ii](xx,yy));
-            }
-            mexPrintf("\n");
-        }
-    }
+
     
     // Vector to store output
     std::vector<double> results;
@@ -166,8 +157,8 @@ mexFunction( int nlhs, mxArray *plhs[],
         double nvoi = 0;
         for(std::size_t ii=0; ii<n_gts; ++ii)
         {
-            uint32 num_regs_1 = int_mats[ii].cols();
-            uint32 num_regs_2 = int_mats[ii].rows();
+            uint32 num_regs_1 = int_mats[ii].rows();
+            uint32 num_regs_2 = int_mats[ii].cols();
 
             double tmp = (double)variation_of_information(int_mats[ii]);
 

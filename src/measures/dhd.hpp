@@ -32,8 +32,8 @@
 //! \author Jordi Pont Tuset <jordi.pont@upc.edu>
 uint64 directional_hamming_distance(const inters_type& intersect_matrix)
 {
-    std::size_t num_reg_1 = intersect_matrix.cols();
-    std::size_t num_reg_2 = intersect_matrix.rows();
+    std::size_t num_reg_1 = intersect_matrix.rows();
+    std::size_t num_reg_2 = intersect_matrix.cols();
 
     // The pixels that remain are those with maximum intersection with the reference partition
     uint64 curr_max, sum_max=0, image_area=0;

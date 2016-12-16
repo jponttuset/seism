@@ -29,8 +29,8 @@
 //! \author Jordi Pont Tuset <jordi.pont@upc.edu>
 double bidirectional_consistency_error(const inters_type& intersect_matrix)
 {
-    uint32 num_reg_1 = intersect_matrix.cols();
-    uint32 num_reg_2 = intersect_matrix.rows();
+    uint32 num_reg_1 = intersect_matrix.rows();
+    uint32 num_reg_2 = intersect_matrix.cols();
 
     std::vector<uint64> sum_row(num_reg_1,0);
     std::vector<uint64> sum_col(num_reg_2,0);
@@ -73,8 +73,8 @@ double bidirectional_consistency_error(const inters_type& intersect_matrix)
 //! \author Jordi Pont Tuset <jordi.pont@upc.edu>
 double global_consistency_error(const inters_type& intersect_matrix)
 {
-    uint32 num_reg_1 = intersect_matrix.cols();
-    uint32 num_reg_2 = intersect_matrix.rows();
+    uint32 num_reg_1 = intersect_matrix.rows();
+    uint32 num_reg_2 = intersect_matrix.cols();
 
     std::vector<uint64> sum_row(num_reg_2,0);
     std::vector<uint64> sum_col(num_reg_1,0);
@@ -119,8 +119,8 @@ double global_consistency_error(const inters_type& intersect_matrix)
 //! \author Jordi Pont Tuset <jordi.pont@upc.edu>
 double local_consistency_error(const inters_type& intersect_matrix)
 {
-    uint32 num_reg_1 = intersect_matrix.cols();
-    uint32 num_reg_2 = intersect_matrix.rows();
+    uint32 num_reg_1 = intersect_matrix.rows();
+    uint32 num_reg_2 = intersect_matrix.cols();
 
     std::vector<uint64> sum_row(num_reg_2,0);
     std::vector<uint64> sum_col(num_reg_1,0);   

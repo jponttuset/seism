@@ -217,7 +217,7 @@ void ObjectsAndPartsF::calculate(const std::vector<inters_type>& intersect_matri
 {
     _clear();
     _area_percentile = 0.99;
-    uint32 num_reg_part = intersect_matrices[0].cols();
+    uint32 num_reg_part = intersect_matrices[0].rows();
     std::size_t n_gts = intersect_matrices.size();
     _classification_part.resize(num_reg_part); // Allocate
     _prec_part.resize(num_reg_part); // Allocate
@@ -234,7 +234,7 @@ void ObjectsAndPartsF::calculate(const std::vector<inters_type>& intersect_matri
     // Get areas and intersections
     for(std::size_t part_id=0; part_id<n_gts; ++part_id)
     {
-        num_reg_gt[part_id]  = intersect_matrices[part_id].rows();
+        num_reg_gt[part_id]  = intersect_matrices[part_id].cols();
 
         _classification_gt[part_id].resize(num_reg_gt[part_id]); // Allocate
         _recall_gt[part_id].resize(num_reg_gt[part_id]); // Allocate
@@ -248,7 +248,7 @@ void ObjectsAndPartsF::calculate(const std::vector<inters_type>& intersect_matri
             {
                 for(std::size_t jj=0; jj<num_reg_part; jj++)
                 {
-                    image_area += intersect_matrices[part_id](part_id,ii);
+                    image_area += intersect_matrices[part_id](jj,ii);
                     region_areas_part[jj] = region_areas_part[jj] + intersect_matrices[part_id](jj,ii);
                     region_areas_gt[part_id][ii]   = region_areas_gt[part_id][ii]   + intersect_matrices[part_id](jj,ii);
                 }

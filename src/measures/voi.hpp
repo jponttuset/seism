@@ -29,8 +29,8 @@
  */
 double variation_of_information(const inters_type& intersect_matrix)
 {
-    uint32 num_reg_1 = intersect_matrix.cols();
-    uint32 num_reg_2 = intersect_matrix.rows();
+    uint32 num_reg_1 = intersect_matrix.rows();
+    uint32 num_reg_2 = intersect_matrix.cols();
     
     std::vector<uint64> region_areas_1(num_reg_1,0);
     std::vector<uint64> region_areas_2(num_reg_2,0);
