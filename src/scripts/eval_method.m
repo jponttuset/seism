@@ -50,7 +50,7 @@ if exist(results_file,'file')
     s = dir(results_file);
     if s.bytes > 0
         tmp = dlmread(results_file,',');
-        if size(tmp,1)==num_params
+        if size(tmp,1)==length(im_ids)
             disp(['Already computed: ' results_file])
             return;
         end

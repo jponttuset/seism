@@ -114,7 +114,7 @@ if ~USEprecomputed
     for ii=1:length(measures)
         for jj=1:length(methods)
             % Contours only in 'fb'
-            is_cont = strcmp(methods(ii).type,'contour');
+            is_cont = strcmp(methods(jj).type,'contour');
             if strcmp(measures{ii},'fb') || ~is_cont
                 if exist('cat_id','var')
                     eval_method_all_params(methods(jj).name, measures{ii}, methods(jj).io_func, database, gt_set, is_cont, cat_id);
