@@ -9,7 +9,7 @@ function stats = gather_measure(method, params, measure, database, gt_set, cat_i
 % ------------------------------------------------------------------------ 
 
 % Directory where results are stored
-if nargin<6,
+if nargin<6
     results_dir = fullfile(seism_root, 'results', database, method);
 else
     results_dir = fullfile(seism_root, 'results', database, method,num2str(cat_id));

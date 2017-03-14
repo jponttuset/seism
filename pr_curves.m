@@ -64,7 +64,7 @@ switch database
     case 'BSDS500'
         gt_set   = 'test';
         methods(end+1).name = 'HED';             methods(end).io_func = @read_one_cont_png; methods(end).legend = methods(end).name;  methods(end).type = 'contour';
-       %methods(end+1).name = 'COB';             methods(end).io_func = @read_one_ucm;      methods(end).legend = 'COB';              methods(end).type = 'segmentation';        
+        methods(end+1).name = 'COB';             methods(end).io_func = @read_one_ucm;      methods(end).legend = methods(end).name;  methods(end).type = 'segmentation';        
         methods(end+1).name = 'LEP';             methods(end).io_func = @read_one_lep;      methods(end).legend = methods(end).name;  methods(end).type = 'segmentation';
         methods(end+1).name = 'MCG';             methods(end).io_func = @read_one_ucm;      methods(end).legend = methods(end).name;  methods(end).type = 'segmentation';
         methods(end+1).name = 'SE';              methods(end).io_func = @read_one_cont_png; methods(end).legend = methods(end).name;  methods(end).type = 'contour';
